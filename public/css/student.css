@@ -1,0 +1,125 @@
+body {
+  position: relative;
+}
+
+select {
+  border: 1px solid #e5e5e5;
+  background: url("/images/down_arrow_blank.svg") right center no-repeat;
+  background-size: 1.5rem;
+  padding: 0.75rem;
+  width: 7.5rem;
+  height: 3rem;
+  margin-right: 2rem;
+  font-size: var(--font-size-xs);
+}
+
+.notFound {
+  position: absolute;
+  top: 50%;
+  left: calc(50% - 2rem);
+  transform: translate(-50%, -50%);
+  margin-top: 28rem;
+  color: #2f61ad;
+}
+
+.btn_dropdown {
+  background-color: var(--color-white);
+  width: 313px;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  color: grey;
+  text-align: left;
+  padding: 0.75rem 0.75rem;
+  display: flex;
+}
+.dropdown {
+  position: absolute;
+  top: 13.5rem;
+  left: 6.5rem;
+  border: 1px solid var(--storke);
+  font-family: var(--font-inter);
+  border-radius: 0.5rem;
+  width: 313px;
+}
+
+.dropdown-toggle::after {
+  content: "";
+  background: url("/images/select_option.svg");
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  margin-left: 5rem;
+}
+
+.dropdown .btn {
+  font-size: 1.125rem;
+}
+.dropdown-menu .list {
+  text-align: left;
+  width: 313px;
+  font-size: 1.125rem;
+  margin-right: 0;
+}
+
+.btn_dropdown:hover {
+  background: var(--color-white);
+}
+
+table {
+  background-color: var(--white-haze);
+}
+.table {
+  box-shadow: 0px 9px 20px rgba(197, 204, 215, 0.5);
+}
+table thead tr th {
+  font-size: 1.125rem;
+  padding: 18px 32px;
+}
+table tr th:nth-child(1) {
+  border-radius: 10px 0 0 0;
+}
+table tr th:nth-child(5) {
+  border-radius: 0 10px 0 0;
+}
+table tr td:nth-child(1),
+table tr th:nth-child(1) {
+  padding: 16px 16px 16px 64px;
+  width: 102px;
+  height: 51px;
+}
+table tr th:nth-child(2) {
+  padding: 16px 32px 16px 0;
+  height: 51px;
+}
+table tr td:nth-child(2) {
+  text-align: left;
+  padding: 18px 32px;
+  width: 250px;
+  height: 58px;
+}
+table tr td:nth-child(3),
+table tr th:nth-child(3) {
+  text-align: left;
+  padding: 16px 32px 16px 0;
+}
+table tr td:nth-child(3) {
+  width: 612px;
+  height: 51px;
+}
+table tr th:nth-child(4) {
+  padding: 16px 32px;
+}
+table tr td:nth-child(4) {
+  text-align: right;
+  padding: 16px 32px;
+}
+table tr th:nth-child(5) {
+  padding: 16px 64px;
+}
+table tr td:nth-child(5) {
+  text-align: right;
+  padding: 16px 64px;
+  width: 201px;
+  height: 51px;
+}

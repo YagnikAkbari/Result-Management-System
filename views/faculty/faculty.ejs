@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://kit.fontawesome.com/f320fe6294.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/all_buttons.css" />
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/student.css" />
+    <link rel="stylesheet" href="css/faculty.css" />
+    <link rel="stylesheet" href="css/result_searched.css" />
+    <link rel="stylesheet" href="css/tableAlign.css" />
+    <title><%= pageTitle %></title>
+    <style>
+      #download-list {
+        display: none;
+      }
+
+      table {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="container">
+        <div class="left-logo">
+          <a href="/faculty"
+            ><img src="images/ldrp_logo.png" alt="ldrp_logo"
+          /></a>
+        </div>
+        <div class="right-nav-icons">
+          <div class="grade-menu">
+            <a href="/grade_history"
+              ><img
+                src="images/history.svg"
+                alt="grade icon"
+                class="fa-icon"
+              />Grade history</a
+            >
+          </div>
+          <form action="/logout" method="post">
+            <button type="submit" class="submitBtn btns">
+              <img src="images/logout.svg" alt="user" class="fa-icon" /> Logout
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <div class="selection--search">
+      <select
+        id="batch"
+        onChange="populateDropdown2()"
+        name="Batch"
+        class="drop-custom"
+      >
+      <option value="batch" selected>Batch</option>
+      <option value="2020-24" <%= batch === "2020-24" ? 'selected' : '' %>>2020-24</option>
+      <option value="2021-25" <%= batch === "2021-25" ? 'selected' : '' %>>2021-25</option>
+      </select>
+
+      <select
+      id="branch"
+      onChange="populateDropdown2()"
+      name="Branch"
+      class="drop-custom"
+      >
+      <option value="branch" selected>Branch</option>
+      <option value="CE" <%= branch === "CE" ?  'selected' : '' %>>CE</option>
+      <option value="IT" <%= branch === "IT" ? 'selected' : '' %>>IT</option>
+      </select>
+
+      <select
+        id="semester"
+        onchange="populateDropdown2()"
+        name="Division"
+        class="drop-custom"
+      >
+      <option value="sem" selected>Semester</option>
+      <option value="4" <%= semester === '4' ? 'selected' : '' %>>SEM 4</option> 
+      <option value="5" <%= semester === '5' ? 'selected' : '' %>>SEM 5</option>
+      <option value="6" <%= semester === '6' ? 'selected' : '' %>>SEM 6</option>
+      </select>
+
+      <select
+        id="division"
+        onChange="populateDropdown2()"
+        name="Division"
+        class="drop-custom"
+      >
+        <option value="div" selected>Division</option>
+        <option value="B" <%= division === 'B' ? 'selected' : '' %>>B</option>
+        <option value="D" <%= division === 'D' ? 'selected' : '' %>>D</option>
+        <option value="E" <%= division === 'E' ? 'selected' : '' %>>E</option>
+        <option value="b" <%= division === 'b' ? 'selected' : '' %>>b</option>
+        <option value="I" <%= division === 'I' ? 'selected' : '' %>>I</option>
+        <option value="J" <%= division === 'J' ? 'selected' : '' %>>J</option>
+      </select>
+
+      <select id="subjects" name="Subject">
+        <option value="">Subject</option>
+      </select>
+      <form id="myForm" action="/result" method="post">
+        <input id="semHidden" type="hidden" name="semester" value="" />
+        <input id="divHidden" type="hidden" name="division" value="" />
+        <input id="subHidden" type="hidden" name="subject" value="" />
+        <input id="batchHidden" type="hidden" name="batch" value="" />
+        <input id="branchHidden" type="hidden" name="branch" value="" />
+        <input
+          type="submit"
+          name="btnSearch"
+          value="Search"
+          class="btn-search"
+          id="btn-search"
+        />
+      </form>
+    </div>
+
+    <% if (result.length > 0) { %>
+      <table class="table" style="display: block;">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col left-border">Enollment number</th>
+            <th scope="col">student name</th>
+            <th scope="col">subject name</th>
+            <th scope="col">marks</th>
+            <th scope="col right-border">status</th>
+          </tr>
+        </thead>
+      <% for(let i = 0; i < result.length; i++) { %>
+        <tbody>
+          <tr class="failed">
+            <td><%= result[i].Enrollment %></td>
+            <td><%= result[i].Name %></td>
+            <td><%= result[i][subName] %></td>
+            <td class="subMarks"><%= result[i][subMarks] %></td>
+            <% if (result[i][subMarks] >= 12) { %>
+            <td><img src="images/pass.svg" alt="pass" class="pass" /></td>
+            <% } else if (result[i][subMarks] < 12) { %>
+            <td><img src="images/remid.svg" alt="remid" class="remid" /></td>
+            <% } else { %>
+            <td>
+              <img src="images/absent.svg" alt="absent" class="absent" />
+            </td>
+            <% } %>
+          </tr>
+          <% } %>
+        <% } %>
+
+        <% if (result.length === 0) { %>
+          <div class="not-found-svg">
+            <img src="images/not_found.svg" alt="" />
+          </div>
+          <div class="not-found-text">Result not found!</div>
+        <% } %>
+      </tbody>
+    </table>
+    <div>
+      <% if (result.length > 0) { %> 
+        <button style="display: block;" id="download-list" type="submit" name="failedStudents">List of remid students</button>
+     <%  } %>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      function populateDropdown2() {
+        let selectedValue = document.getElementById("semester").value;
+
+        let selectedBranchValue = document.getElementById("branch").value;
+
+        let dropdown2Options = document.getElementById("subjects").options;
+
+        dropdown2Options.length = 0;
+
+        if (selectedBranchValue === "CE") {
+          if (selectedValue === "4") {
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "POM",
+            "1|PrinciplesOfManagement"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "PSNM",
+            "2|ProbabilityStatasticAndNumericalMethods"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "COA",
+            "3|ComputerOrganizationAndArchitecture"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "OS",
+            "4|OperatingSystems"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "OOP",
+            "5|ObjectOrientedProgrammingUsingJava"
+          );
+        } else if (selectedValue === "5") {
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "SE",
+            "1|SoftwareEngineering"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "MAP",
+            "2|MicroprocessorArchitectureAndProgramming"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "TOC",
+            "3|TheoryOfComputation"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "DAA",
+            "4|DesignAndAnalysisOfAlgorithm"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "CN",
+            "5|ComputerNetworks"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "AJAVA",
+            "6|AdvancedJavaProgramming"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "DOTNET",
+            "6|DotNetTechnology"
+          );
+        } else if (selectedValue === "6") {
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "AI",
+            "1|ArtificialIntelligence"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "PYP",
+            "2|PythonProgramming"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "CNS",
+            "3|CryptographyAndNetworkSecurity"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "ML",
+            "4|MachineLearning"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "AA",
+            "4|AdvancedAlgorithms"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "AP",
+            "4|AndroidProgramming"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "IOS",
+            "4|iOSProgramming"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "SC",
+            "5|SoftComputing"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "IOT",
+            "5|InternetOfThings"
+          );
+        }
+      } else if (selectedBranchValue === 'IT') {
+        if (selectedValue === "4") {
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "POM",
+            "1|PrinciplesOfManagement"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "PSNM",
+            "2|ProbabilityStatasticAndNumericalMethods"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "COA",
+            "3|ComputerOrganizationAndArchitecture"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "OS",
+            "4|OperatingSystems"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "OOP",
+            "5|ObjectOrientedProgrammingUsingJava"
+          );
+        } else if (selectedValue === "5") {
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "SE",
+            "1|SoftwareEngineering"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "SOA",
+            "2|ServiceOrientrdArchitecture"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "FLAT",
+            "3|FormalLanguageAndAutomataTheory"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "FOA",
+            "4|FundamentalOfAlgorithms"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "DCN",
+            "5|DataComunicationAndNetworking"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "AJAVA",
+            "6|AdvancedJavaProgramming"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "DOTNET",
+            "6|DotNetTechnology"
+          );
+          dropdown2Options[dropdown2Options.length] = new Option(
+            "PYP",
+            "6|PythonProgramming"
+          );
+        }
+      }
+    }
+    </script>
+
+    <script>
+      const semesterDropdown = document.getElementById("semester");
+      const divisionDropdown = document.getElementById("division");
+      const subjectsDropdown = document.getElementById("subjects");
+      const batchDropdown = document.getElementById("batch");
+      const branchDropdown = document.getElementById("branch");
+
+      function handleDropdownChange() {
+        const semesterSelectedValue = semesterDropdown.value;
+        const divisionSelectedValue = divisionDropdown.value;
+        const subjectsSelectedValue = subjectsDropdown.value;
+        const batchSelectedValue = batchDropdown.value;
+        const branchSelectedValue = branchDropdown.value;
+
+        document.getElementById("semHidden").value = semesterSelectedValue;
+        document.getElementById("divHidden").value = divisionSelectedValue;
+        document.getElementById("subHidden").value = subjectsSelectedValue;
+        document.getElementById("batchHidden").value = batchSelectedValue;
+        document.getElementById("branchHidden").value = branchSelectedValue;
+      }
+
+      semesterDropdown.addEventListener("change", handleDropdownChange);
+      divisionDropdown.addEventListener("change", handleDropdownChange);
+      subjectsDropdown.addEventListener("change", handleDropdownChange);
+      batchDropdown.addEventListener("change", handleDropdownChange);
+      branchDropdown.addEventListener("change", handleDropdownChange);
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+    <script>
+      document.querySelector("#download-list").addEventListener("click", exportFailedResultsToExcel);
+
+      function exportFailedResultsToExcel() {
+      const table = document.querySelector("table");
+      const rows = Array.from(table.querySelectorAll(".failed"));
+
+      const failedRows = Array.from(rows).filter((row) => {
+        const subMarks = parseInt(row.querySelector(".subMarks").textContent);
+        return subMarks < 12;
+      });
+
+      const absentRows = Array.from(rows).filter((row) => {
+        const abMarks = row.querySelector(".subMarks").textContent;
+        if (abMarks == 'AB') {
+          return abMarks;
+        }
+      });
+
+      const table1 = document.createElement("table");
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+      const titleArray = ["Enrollment No", "Student Name", "Subject Name", "Result"];
+      titleArray.forEach((title) => {
+      const th = document.createElement("th");
+      const boldTitle = document.createElement("strong");
+      boldTitle.innerText = title;
+      th.appendChild(boldTitle);
+      headerRow.appendChild(th);
+    });
+      thead.appendChild(headerRow);
+      table1.appendChild(thead);
+      const tbody = document.createElement("tbody");
+
+      for (let i = failedRows.length - 1; i >= 0; i--) {
+        tbody.insertBefore(failedRows[i], tbody.firstChild);
+      }
+
+      table1.appendChild(tbody);
+
+      for (let i = absentRows.length - 1; i >= 0; i--) {
+        tbody.insertBefore(absentRows[i], tbody.firstChild);
+      }
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.table_to_sheet(table1);
+
+      ws['!ref'] = XLSX.utils.encode_range({
+        s: { r: 0, c: 0 },
+        e: { r: failedRows.length + 1, c: 3 },
+      });
+      ws['!cols'] = [
+        { wpx: 120, align: "center" },
+        { wpx: 280, align: "center" },
+        { wpx: 280, align: "center" },
+        { wpx: 90, align: "center" },
+      ];
+      ws['!rows'] = failedRows.map(() => ({ height: 20, hidden: false }));
+      ws['!rows'].forEach((row) => (row['customHeight'] = true));
+      ws['!rows'].forEach((row) => (row['verticalCentered'] = true));
+
+      XLSX.utils.book_append_sheet(wb, ws, "Failed Results");
+
+      XLSX.writeFile(wb, "failed_results.xlsx");
+    }
+    
+    </script>    
+  </body>
+</html>

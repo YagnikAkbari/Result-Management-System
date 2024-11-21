@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/new_password.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap"
+    />
+    <style>
+      body {
+        background-color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <title>Reset Password</title>
+  <body>
+    <div class="main-login">
+      <form
+        class="frame-parent"
+        id="frameForm"
+        action="/updatePassword"
+        method="POST"
+      >
+        <input
+          class="frame-child"
+          type="password"
+          required
+          placeholder="New password"
+        />
+        <input
+          class="frame-item"
+          type="password"
+          name="confirmPassword"
+          required
+          placeholder="Confirm password"
+        /><button class="login-wrapper login disabled-button" type="submit">
+          Login
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  width: 752px;
+  height: 500px;
+  font-size: 1rem;
+  font-family: var(--font-inter);
+}
+label {
+  font-weight: 500;
+  line-height: 16.94px;
+}
+p {
+  margin-top: 0.25rem;
+  font-weight: 500;
+  font-size: 1.125rem;
+  line-height: 21.78px;
+}
+.card {
+  background-color: var(--color-white);
+  height: 400px;
+  border-radius: 1rem;
+  padding: 4.5rem 6.5rem;
+  box-shadow: 0px 17px 66px rgba(64, 63, 98, 0.16);
+}
+.upper,
+.down,
+.middle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 1rem;
+  width: 40rem;
+  grid-gap: 3.688rem;
+  margin-bottom: 2rem;
+}
+.upper-left,
+.middle-left,
+.down-left {
+  gap: 3.688rem;
+  padding-right: 8rem;
+}
+p {
+  font-size: 1.25rem;
+}

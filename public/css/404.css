@@ -1,0 +1,33 @@
+body {
+  background-color: var(--color-white) !important;
+}
+#page_not_found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3rem;
+  text-align: center;
+}
+#page_not_found #page_not_found_image img {
+  width: 414px;
+  height: 389px;
+}
+#page_not_found #page_not_found_text {
+  margin-top: 6px;
+}
+#server_error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8rem;
+  text-align: center;
+}
+#server_error #server_error_image img {
+  width: 256px;
+  height: 196px;
+}
+#server_error #server_error_text {
+  margin-top: 25px;
+}

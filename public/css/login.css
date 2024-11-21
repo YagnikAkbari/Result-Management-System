@@ -1,0 +1,131 @@
+body {
+  margin: 0;
+}
+
+.reset {
+  margin-left: 10rem;
+}
+
+.side-design-icon {
+  width: 26.88vw;
+  height: 100vh;
+  overflow: hidden;
+  object-fit: cover;
+}
+.main {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--primary-color);
+  display: flex;
+}
+
+.main-login {
+  background-color: var(--primary-color);
+}
+
+/* inputs styling */
+.inputs {
+  border-radius: 16px;
+  background-color: var(--color-white);
+  height: 34.63rem;
+  display: flex;
+  width: 30rem;
+  padding: 0 var(--padding-md) var(--padding-md);
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  gap: 1.81rem;
+  margin: auto;
+}
+
+/* form heading styling */
+.login {
+  position: relative;
+  font-size: 2rem;
+  font-family: var(--font-inter);
+  color: #273535;
+  text-align: left;
+  font-weight: 700;
+}
+
+.login-label {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding-sm) 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-field,
+.inputs {
+  display: flex;
+  flex-direction: column;
+}
+.input-field {
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 2rem;
+  cursor: pointer;
+}
+
+.button,
+.user-id-input {
+  display: flex;
+  font-family: var(--font-inter);
+  border-radius: var(--br-sm);
+  width: 27rem;
+  flex-direction: row;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.user-id-input {
+  border: 1.5px solid #dbdbdb;
+  font-weight: 500;
+  font-size: var(--font-size-xs);
+  background-color: transparent;
+  padding: var(--padding-md);
+  justify-content: flex-start;
+  color: var(--grey);
+  caret-color: var(--black);
+}
+
+.user-id-input:active,
+.user-id-input:hover {
+  border: 1.5px solid var(--grey);
+  box-sizing: border-box;
+}
+.user-id-input:focus {
+  outline-color: var(--primary-color);
+}
+.user-id-input:valid {
+  color: var(--grey);
+  border-color: var(--grey);
+}
+.user-message {
+  width: 27rem;
+  display: flex;
+  gap: 1.7rem;
+  height: 4.375rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--br-sm);
+  padding: 1rem 0.75rem;
+  box-sizing: border-box;
+  font-family: var(--font-inter);
+  font-size: 1rem;
+}
+.emoji {
+  font-size: 1.5rem;
+}
+
+.reset-password {
+  color: var(--primary-color);
+}
+
+.reset {
+  margin: auto;
+}
