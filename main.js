@@ -8,6 +8,7 @@ const session = require("express-session");
 const routes = require("./routes/index");
 const { connectDatabaseWithRetry } = require("./database/connection");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const errorController = require("./controller/error");
 const app = express();
 
 const PORT = process.env.PORT || 8080;
@@ -46,6 +47,7 @@ app.get("/", (req, res, next) => {
 });
 
 app.use(routes);
+app.get("*", errorController.get404);
 app.use((err, req, res, next) => {
   console.log(err);
   return res.status(err?.httpStatusCode ?? 500).json(err?.message);

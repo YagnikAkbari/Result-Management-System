@@ -8,6 +8,7 @@ const branchRoutes = require("../routes/branch");
 const divisionRoutes = require("../routes/division");
 const semesterRoutes = require("../routes/semester");
 const subjectRoutes = require("../routes/subject");
+const resultRoutes = require("../routes/result")
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router.use(batchRoutes);
 router.use(branchRoutes);
 router.use(divisionRoutes);
 router.use(semesterRoutes);
-router.use(subjectRoutes)
+router.use(subjectRoutes);
+router.use(resultRoutes);
 
 module.exports = router;

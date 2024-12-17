@@ -55,19 +55,18 @@
     </div>
 
     <div class="selection--search">
-      <select id="semester" name="Division" class="drop-custom">
-        <option value="sem" selected>Semester</option>
-        <option value="1">SEM 1</option>
-        <option value="2">SEM 2</option>
-        <option value="3">SEM 3</option>
-        <option value="4">SEM 4</option>
-        <option value="5">SEM 5</option>
-        <option value="6">SEM 6</option>
-        <option value="7">SEM 7</option>
-        <option value="8">SEM 8</option>
+      <select
+        id="semester"
+        name="Division"
+        class="drop-custom semester-selection"
+      >
+        <option value="semester">Semester</option>
+        <% details?.semesters?.forEach(sem => { %>
+        <option value="<%= sem?.semesterKey %>"><%= sem?.Name %></option>
+        <% }); %>
       </select>
 
-      <form id="myForm" method="post">
+      <form id="myForm" method="get">
         <input id="semHidden" type="hidden" name="semester" value="" />
         <input
           type="submit"
@@ -78,12 +77,12 @@
         />
       </form>
     </div>
-    
+
     <% if (errorMessage) { %>
-      <div class="not-found-svg">
-        <img src="images/not_found.svg" alt="" />
-        <p class="notFound">Result not found.</p>
-      </div>
+    <div class="not-found-svg">
+      <img src="images/not_found.svg" alt="" />
+      <p class="notFound">Result not found.</p>
+    </div>
     <% } %>
 
     <script>
@@ -96,9 +95,8 @@
         semesterSelectedValue = semesterDropdown.value;
 
         document.getElementById("semHidden").value = semesterSelectedValue;
-        myform.action = `result${semesterSelectedValue}`;
+        myform.action = `result?semester=${semesterSelectedValue}`;
       }
-
 
       semesterDropdown.addEventListener("change", handleDropdownChange);
     </script>

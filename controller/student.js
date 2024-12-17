@@ -1,17 +1,39 @@
 const Login = require("../model/login");
 const Student = require("../model/student");
+const Branch = require("../model/branch");
+const Result = require("../model/result");
+const Semester = require("../model/semester");
+const Subject = require("../model/subject");
 
-exports.getStudentPage = (req, res, next) => {
-  let resultNotFound = req.flash("resultNotFound");
-  if (resultNotFound.length > 0) {
-    resultNotFound = resultNotFound[0];
-  } else {
-    resultNotFound = null;
+exports.getStudentPage = async (req, res) => {
+  try {
+    let resultNotFound = req.flash("resultNotFound");
+    const user = req.session.login;
+    let semesters = [];
+    let student = null;
+    if (user) {
+      student = await Student.findOne({ userId: user?._id });
+    }
+    if (student) {
+      semesters = await Branch.findById(student?.Branch).populate("semesters");
+    }
+    if (semesters?.length) {
+      semesters = semesters?.semesters;
+    }
+    if (resultNotFound.length > 0) {
+      resultNotFound = resultNotFound[0];
+    } else {
+      resultNotFound = null;
+    }
+
+    res.render("student/student", {
+      pageTitle: "Student",
+      errorMessage: resultNotFound,
+      details: semesters,
+    });
+  } catch (err) {
+    console.log(err);
   }
-  res.render("student/student", {
-    pageTitle: "Student",
-    errorMessage: resultNotFound,
-  });
 };
 
 exports.getProfile = async (req, res, next) => {
@@ -63,87 +85,49 @@ exports.getProfile = async (req, res, next) => {
   }
 };
 
-exports.postResult4 = (req, res, next) => {
-  const enrollmentNo = req.session.login.username;
-  const semester = req.body.semester;
-  Result4.findOne({ Enrollment: enrollmentNo })
-    .then((result) => {
-      if (result) {
-        academicYear = result.AcademicYear;
-        return res.render("student/result_CE_4", {
-          pageTitle: "Semester 4 Result",
-          result,
-          name,
-          enrollmentNo,
-          division,
-          branch,
-          academicYear,
-          semester,
-        });
-      } else {
-        req.flash("resultNotFound", "❌ Oops! Your result is not available.");
-        return res.redirect("/student");
-      }
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
-};
+exports.getResult = async (req, res, next) => {
+  try {
+    const { username: enrollmentNo } = req.session.login;
 
-exports.postResult5 = (req, res, next) => {
-  const enrollmentNo = req.session.login.username;
-  const semester = req.body.semester;
-  Result.findOne({ Enrollment: enrollmentNo })
-    .then((result) => {
-      if (result) {
-        res.render("student/result_CE_5", {
-          pageTitle: "Semester 5 Result",
-          result,
-          name,
-          enrollmentNo,
-          division,
-          branch,
-          academicYear,
-          semester,
-        });
-      } else {
-        req.flash("resultNotFound", "❌ Oops! Your result is not available.");
-        return res.redirect("/student");
-      }
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+    const semesterObj = await Semester.findOne({
+      semesterKey: req.query.semester,
     });
-};
+    const studentObj = await Student.findOne({
+      EnrollmentNo: enrollmentNo,
+    });
 
-exports.postResult6 = (req, res, next) => {
-  const enrollmentNo = req.session.login.username;
-  const semester = req.body.semester;
-  Result6.findOne({ Enrollment: enrollmentNo })
-    .then((result) => {
-      if (result) {
-        res.render("student/result_CE_6", {
-          pageTitle: "Semester 6 Result",
-          result,
-          name,
-          enrollmentNo,
-          division,
-          branch,
-          academicYear,
-          semester,
-        });
-      } else {
-        req.flash("resultNotFound", "❌ Oops! Your result is not available.");
-        return res.redirect("/student");
-      }
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+    const result = await Result.findOne({
+      student: studentObj?._id,
+      semester: semesterObj?._id,
     });
+
+    if (!result) {
+      req.flash("resultNotFound", "❌ Oops! Your result is not available.");
+      return res.redirect("/student");
+    }
+    let resultData = [];
+    if (Object?.keys(result?.result)?.length) {
+      resultData = await Promise.all(
+        Object?.keys(result?.result)?.map(async (subCode) => {
+          const subject = await Subject.findOne({ subjectCode: subCode });
+
+          return {
+            ...(subject?._doc || {}),
+            subjectMarks: result?.result[subCode],
+          };
+        })
+      );
+    }
+
+    result.result = resultData;
+    console.log("studnetresultresult:::----", result);
+    return res.render("student/result", {
+      pageTitle: `${req.query.semester} Result`,
+      result,
+    });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };

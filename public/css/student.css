@@ -13,6 +13,10 @@ select {
   font-size: var(--font-size-xs);
 }
 
+.semester-selection {
+  text-transform: uppercase;
+}
+
 .notFound {
   position: absolute;
   top: 50%;
