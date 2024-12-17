@@ -59,7 +59,6 @@ select {
   font-size: 1rem;
 }
 
-
 @media only screen and (min-width: 768px) {
   .correct--format {
     font-size: 1.2rem;
@@ -126,15 +125,19 @@ select {
   cursor: pointer;
 }
 
-.correct-format-image img {
+.correct-format-image {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 50vw;
-  height: 70vh;
-  transform: translate(-25vw, -35vh);
+  transform: translate(-50%, -50%);
   z-index: 2;
 }
+.correct-format-image img {
+  width: auto;
+  min-width: 70vw;
+  min-height: 80vh;
+}
+
 .correct-format-image-close img {
   cursor: pointer;
   position: fixed;
@@ -143,4 +146,16 @@ select {
   width: 2.875rem;
   height: 2.875rem;
   z-index: 2;
+}
+
+.download-icon {
+  position: relative;
+}
+.download-icon .download-hidden-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  color: var(--primary-color);  
+  height: 100%;
 }

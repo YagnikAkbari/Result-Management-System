@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { userTypes } = require("../config/constants");
 
 const Schema = mongoose.Schema;
 
@@ -6,20 +7,23 @@ const loginSchema = new Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
     required: true,
   },
-  flag: {
-    type: Number,
+
+  userType: {
+    type: String,
     required: true,
-  },
-  firstLogin: {
-    type: Boolean,
-    default: true,
+    enum: userTypes,
   },
   Name: {
+    type: String,
+    required: true,
+  },
+  Email: {
     type: String,
     require: true,
   },
@@ -27,28 +31,14 @@ const loginSchema = new Schema({
     type: Number,
     require: true,
   },
-  Email: {
-    type: String,
-    require: true,
-  },
-  Branch: {
-    type: String,
-    require: true,
-  },
-  Div: {
-    type: String,
-    require: true,
-  },
-
-  Batch: {
-    type: String,
-    require: true,
+  firstLogin: {
+    type: Boolean,
+    default: true,
   },
 
   resetToken: {
     type: String,
   },
-
   resetTokenExpiration: {
     type: Date,
   },

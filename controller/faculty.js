@@ -1,6 +1,4 @@
 const Login = require("../model/login");
-const Result4_CE = require("../model/result_CE_4");
-const Result5_CE = require("../model/result_CE_5");
 
 const mongoose = require("mongoose");
 
@@ -41,7 +39,7 @@ exports.postFacultyResult = (req, res, next) => {
   }
 
   Promise.all(promises)
-    .then(results => {
+    .then((results) => {
       const mergedResults = [].concat(...results);
       return res.render("faculty/faculty", {
         pageTitle: "Result",
@@ -55,7 +53,7 @@ exports.postFacultyResult = (req, res, next) => {
         branch: branch,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -132,7 +130,7 @@ exports.postGradeHistory = (req, res, next) => {
   }
 
   getUserBranch(enr)
-    .then(user => {
+    .then((user) => {
       if (!user) {
         return res.render("faculty/grade_history_searched", {
           pageTitle: "Grade History",
@@ -155,7 +153,7 @@ exports.postGradeHistory = (req, res, next) => {
       }
 
       Promise.all(promises)
-        .then(results => {
+        .then((results) => {
           const combinedResults = results.flat();
           console.log(combinedResults);
           res.render("faculty/grade_history_searched", {
@@ -163,13 +161,13 @@ exports.postGradeHistory = (req, res, next) => {
             result: combinedResults,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           const error = new Error(err);
           error.httpStatusCode = 500;
           return next(error);
         });
     })
-    .catch(err => {
+    .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);

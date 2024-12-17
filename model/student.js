@@ -3,50 +3,39 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const studentSchema = new Schema({
-  Enrollment: {
-    type: String,
-    require: true,
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "Login",
+    required: true,
   },
-  Password: {
+  EnrollmentNo: {
     type: String,
-    require: true,
+    required: true,
   },
-  Name: {
+  collegeEmail: {
     type: String,
-    require: true,
-  },
-  MobileNo: {
-    type: Number,
-    require: true,
-  },
-  Email: {
-    type: String,
-    require: true,
+    unique: true,
+    lowercase: true,
   },
   Branch: {
-    type: String,
-    require: true,
+    type: Schema.Types.ObjectId,
+    ref: "Branch",
+    required: true,
   },
   Div: {
-    type: String,
-    require: true,
+    type: Schema.Types.ObjectId,
+    ref: "Division",
+    required: true,
   },
-  Flag: {
-    type: Number,
-    require: true,
-  },
-
   Batch: {
-    type: String,
-    require: true,
+    type: Schema.Types.ObjectId,
+    ref: "Batch",
+    required: true,
   },
-
-  resetToken: {
-    type: String,
-  },
-
-  resetTokenExpiration: {
-    type: Date,
+  currentSemester: {
+    type: Schema.Types.ObjectId,
+    ref: "Semester",
+    required: true,
   },
 });
 

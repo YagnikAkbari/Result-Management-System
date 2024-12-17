@@ -27,11 +27,7 @@
         <div class="menus">
           <form action="./student_profile.html">
             <button type="submit" class="profileBtn btns active">
-              <img
-                src="images/user.svg"
-                alt="user"
-                class="fa-icon active"
-              />
+              <img src="images/user.svg" alt="user" class="fa-icon active" />
               Profile
             </button>
           </form>
@@ -46,30 +42,43 @@
     </nav>
     <div class="info">
       <div class="card">
-        <div class="upper">
-          <div class="upper-left">
-            <label for="">Name:</label><br />
-            <p><%=name%></p>
-          </div>
-          <div class="upper-right">
-            <label for="">Department:</label><br />
-            <p>Computer Engineering</p>
+        <div>
+          <div>
+            <label>Name:</label><br />
+            <p><%=user?.Name%></p>
           </div>
         </div>
-        <div class="middle">
-          <div class="middle-left">
-            <label for="">Division:</label><br />
-            <p><%=division%></p>
+
+        <div>
+          <div>
+            <label>Division:</label><br />
+            <p><%=user?.Div%></p>
           </div>
-          <div class="middle-right">
-            <label for="">Enrollment:</label><br />
-            <p><%=enrollmentNo%></p>
+          <div>
+            <label>Enrollment:</label><br />
+            <p><%=user?.EnrollmentNo%></p>
           </div>
         </div>
-        <div class="down">
-          <div class="down-left">
-            <label for="">Batch:</label><br />
-            <p><%= batch %></p>
+
+        <div>
+          <div>
+            <label>Batch:</label><br />
+            <p><%= user?.Batch %></p>
+          </div>
+          <div>
+            <label for="">Branch:</label><br />
+            <p><%= user?.Branch %></p>
+          </div>
+        </div>
+
+        <div>
+          <div>
+            <label for="">Email:</label><br />
+            <p><%= user?.Email %></p>
+          </div>
+          <div>
+            <label for="">College Email:</label><br />
+            <p><%= user?.collegeEmail %></p>
           </div>
         </div>
       </div>
