@@ -155,7 +155,6 @@ exports.postGradeHistory = (req, res, next) => {
       Promise.all(promises)
         .then((results) => {
           const combinedResults = results.flat();
-          console.log(combinedResults);
           res.render("faculty/grade_history_searched", {
             pageTitle: "Grade History",
             result: combinedResults,

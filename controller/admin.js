@@ -1,38 +1,49 @@
 const path = require("path");
 const XLSX = require("xlsx");
 const {
-  compareColumns,
   convertToInsertManyMultipleObject,
   compareExcelColumns,
+  convertToInsertManyObject,
 } = require("../config/helpers");
 const Login = require("../model/login");
 const Student = require("../model/student");
-const modelMap = {};
+const fs = require("fs");
 const { ignoreColumns } = require("../config/constants");
 const Semester = require("../model/semester");
 const Branch = require("../model/branch");
 const Batch = require("../model/batch");
 const Division = require("../model/division");
+const SubjectAssignment = require("../model/subjectAssignment");
+const Result = require("../model/result");
 
-exports.getAdminPage = (req, res, next) => {
-  let successMessage = req.flash("error");
-  if (successMessage.length > 0) {
-    successMessage = successMessage[0];
-  } else {
-    successMessage = null;
-  }
+exports.getAdminPage = async (req, res, next) => {
+  try {
+    let successMessage = req.flash("success");
+    if (successMessage.length > 0) {
+      successMessage = successMessage[0];
+    } else {
+      successMessage = null;
+    }
 
-  let errorMessage = req.flash("error1");
-  if (errorMessage.length > 0) {
-    errorMessage = errorMessage[0];
-  } else {
-    errorMessage = null;
+    let errorMessage = req.flash("error");
+    if (errorMessage.length > 0) {
+      errorMessage = errorMessage[0];
+    } else {
+      errorMessage = null;
+    }
+
+    const semesters = await Semester.find();
+    const branches = await Branch.find();
+
+    res.render("admin/admin", {
+      pageTitle: "Admin",
+      successMessage: successMessage,
+      errorMessage: errorMessage,
+      details: { semesters, branches },
+    });
+  } catch (err) {
+    console.log(err);
   }
-  res.render("admin/admin", {
-    pageTitle: "Admin",
-    successMessage: successMessage,
-    errorMessage: errorMessage,
-  });
 };
 
 exports.getStudentData = (req, res, next) => {
@@ -61,7 +72,6 @@ exports.postStudentData = async (req, res) => {
   try {
     const validExtensions = [".xls", ".xlsx"];
     const fileExtension = path.extname(req.file.originalname);
-    console.log("reqfiles-----", req.file);
     if (!validExtensions.includes(fileExtension)) {
       req.flash(
         "error",
@@ -78,7 +88,7 @@ exports.postStudentData = async (req, res) => {
     let compareColumns = Object.keys(Login.schema.paths)
       .concat(Object?.keys(Student.schema.paths))
       .filter((col) => !ignoreColumns?.includes(col));
-    const columnErrors = compareExcelColumns(xlData, compareColumns);
+    const columnErrors = compareExcelColumns(xlData[0], compareColumns);
 
     if (columnErrors) {
       const { missingColumns, extraColumns } = columnErrors;
@@ -138,7 +148,6 @@ exports.postStudentData = async (req, res) => {
     return res.redirect("/studentData");
   } catch (err) {
     console.log(err);
-    err?.results?.map((obj) => console.log(obj?.err));
     req.flash(
       "error",
       "❌ Duplicate Enteries Present. Please check the excel file again"
@@ -147,72 +156,103 @@ exports.postStudentData = async (req, res) => {
   }
 };
 
-exports.postResultData = (req, res) => {
-  const { semester, branch, batch } = req.body;
+exports.postResultData = async (req, res) => {
+  try {
+    const { Semester: sem, Branch: branch } = req.body;
 
-  const validExtensions = [".xls", ".xlsx"];
-  const fileExtension = path.extname(req.file.originalname);
-  if (!validExtensions.includes(fileExtension)) {
-    req.flash(
-      "error1",
-      "❌ Invalid file format. Only Excel files are allowed."
-    );
-    return res.redirect("/admin");
-  }
+    const validExtensions = [".xls", ".xlsx"];
+    const fileExtension = path.extname(req.file.originalname);
+    const [semesterObj, branchObj] = await Promise.all([
+      await Semester.findOne({ semesterKey: sem }),
+      await Branch.findOne({ branchKey: branch }),
+    ]);
 
-  const ResultModel = modelMap[`${branch}_${semester}`];
+    const subjects = await SubjectAssignment.find({
+      semester: semesterObj?._id,
+      branch: branchObj?._id,
+    }).populate("subject");
 
-  const workbook = XLSX.readFile(req.file.path);
-  const sheet_namelist = workbook.SheetNames;
-  let x = 0;
-  sheet_namelist.forEach((element) => {
-    const xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_namelist[x]]);
-    const columnErrors = compareColumns(xlData, ResultModel);
+    const subjectCodes = subjects?.map((sub) => sub?.subject?.subjectCode);
+    const allowedColumns = [...subjectCodes, "EnrollmentNo", "AcademicYear"];
+
+    if (!validExtensions.includes(fileExtension)) {
+      req.flash(
+        "error",
+        "❌ Invalid file format. Only Excel files are allowed."
+      );
+      return res.redirect("/admin");
+    }
+
+    const workbook = XLSX.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const xlData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    const columnErrors = compareExcelColumns(xlData[0], allowedColumns);
     if (columnErrors) {
       const { missingColumns, extraColumns } = columnErrors;
       let errorMessage = "";
       if (missingColumns.length) {
-        errorMessage += `Total columns are missing from the Excel file: ${
+        errorMessage += `Total columns are missing from the Excel file(${
           missingColumns.length
-        } ${missingColumns.join(",")}`;
+        }): ${missingColumns.join(", ")}`;
       }
-
+      errorMessage += "\n\n";
       if (extraColumns.length) {
-        errorMessage += `Total columns are not present in the database schema: ${extraColumns.length} `;
+        errorMessage += `Extra columns are not allowed in the Excel File(${
+          extraColumns.length
+        }): ${extraColumns.join(", ")} `;
       }
-      req.flash("error1", `❌ ${errorMessage}`);
+      req.flash("error", `❌ ${errorMessage}`);
       return res.redirect("/admin");
     }
-    ResultModel.findOne({}, (err, existingData) => {
+
+    const resultsData = convertToInsertManyObject(xlData)?.filter(
+      (item) => item?.EnrollmentNo !== "-"
+    );
+
+    const finalData = await Promise.all(
+      resultsData?.map(async (result) => {
+        const studentObj = await Student?.findOne({
+          EnrollmentNo: result?.EnrollmentNo,
+        });
+        const data = {
+          ...result,
+          semester: semesterObj?._id,
+          branch: branchObj?._id,
+          division: studentObj?.Div,
+          student: studentObj?._id,
+        };
+
+        const {
+          semester,
+          branch,
+          division,
+          EnrollmentNo,
+          AcademicYear,
+          student,
+          ...resData
+        } = data;
+        return {
+          student,
+          semester,
+          branch,
+          division,
+          AcademicYear,
+          result: resData,
+        };
+      })
+    );
+
+    Result.insertMany(finalData, (err, data) => {
       if (err) {
         return new Error(err);
-      } else if (existingData) {
-        ResultModel.updateOne(
-          {},
-          {
-            $set: {},
-          },
-          (err, data) => {
-            if (err) {
-              return new Error(err);
-            } else {
-              req.flash("error", "✌️The result is uploaded");
-              res.redirect("/admin");
-            }
-          }
-        );
       } else {
-        ResultModel.insertMany(xlData, (err, data) => {
-          if (err) {
-            return new Error(err);
-          } else {
-            req.flash("error", "✌️The result is uploaded");
-            res.redirect("/admin");
-            console.log(data);
-            x++;
-          }
-        });
+        req.flash("success", "✌️The result is uploaded");
+        res.redirect("/admin");
       }
     });
-  });
+  } catch (err) {
+    console.log(err);
+  }
 };

@@ -13,9 +13,7 @@ const compareColumns = (xlData, ResultModel) => {
   return null;
 };
 
-const compareExcelColumns = (xlData, compareColumns) => {
-  const xlColumns = xlData[0];
-
+const compareExcelColumns = (xlColumns, compareColumns) => {
   const missingColumns = compareColumns.filter(
     (col) => !xlColumns.includes(col)
   );
@@ -28,13 +26,11 @@ const compareExcelColumns = (xlData, compareColumns) => {
 };
 
 const convertToInsertManyObject = (data) => {
-  console.log("datadatadatadata:------", data);
-
   let arrObj = data?.map((_, index) => {
     let obj = {};
     data[0]?.map((key, i) => {
       if (index < data?.length - 1) {
-        obj = { ...obj, [key]: data[index + 1][i] };
+        obj = { ...obj, [key]: data[index + 1][i] ?? "-" };
       }
     });
     return obj;

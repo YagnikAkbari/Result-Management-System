@@ -64,7 +64,6 @@ exports.postLogin = async (req, res, next) => {
       if (err) {
         return res.redirect("/login");
       }
-      console.log("useruser", user, user.firstLogin, user.flag);
 
       if (user.firstLogin) {
         user.firstLogin = false;
@@ -106,19 +105,16 @@ exports.postResetFirstTime = async (req, res, next) => {
   try {
     const pass = req.body.pass;
     const confirmPass = req.body.confirmPass;
-    console.log("req.session:::::::::", req.session);
 
     const username = req.session.login.username;
     const email = req.session.login.Email;
 
     const user = await Login.findOne({ username: username });
 
-    console.log("req.user:::::", user);
     if (!user) {
       req.flash("error", "Some error occurred!!");
       return res.redirect("/login");
     }
-    console.log("req.password:::::", pass, confirmPass);
     if (pass !== confirmPass) {
       req.flash(
         "error",

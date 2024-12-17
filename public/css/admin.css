@@ -12,7 +12,7 @@ select {
 
 @media only screen and (min-width: 768px) {
   select {
-    width: 7.5rem;
+    width: fit-content;
     margin-right: 2rem;
   }
 }
@@ -119,6 +119,16 @@ select {
   background-color: var(--success-back);
   color: var(--success-color);
 }
+
+.select--branch--sem {
+  margin-bottom: 2rem;
+}
+
+.select--branch--sem select option,
+.select--branch--sem select {
+  text-transform: uppercase;
+}
+
 /* correct format model styling */
 .correct-format-link {
   color: var(--primary-color);
@@ -156,6 +166,6 @@ select {
   top: 0;
   left: 0;
   width: 100%;
-  color: var(--primary-color);  
+  color: var(--primary-color);
   height: 100%;
 }

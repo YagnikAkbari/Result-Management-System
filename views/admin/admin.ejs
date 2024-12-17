@@ -54,25 +54,26 @@
     </nav>
     <div class="main-box">
       <p class="card-header bold">Upload Result:</p>
-      <div class="select--branch--sem">
-        <select id="sem" name="Semester">
-          <option value="1" selected>SEM 1</option>
-          <option value="2">SEM 2</option>
-          <option value="3">SEM 3</option>
-          <option value="4">SEM 4</option>
-          <option value="5">SEM 5</option>
-          <option value="6">SEM 6</option>
-          <option value="7">SEM 7</option>
-          <option value="8">SEM 8</option>
-        </select>
-        <select id="branch" name="Department">
-          <option value="CE" selected>CE</option>
-          <option value="IT">IT</option>
-        </select>
-      </div>
+
       <div class="card-body">
         <form action="/admin" method="POST" enctype="multipart/form-data">
           <div class="form-group">
+            <div class="select--branch--sem">
+              <select id="semester" name="Semester">
+                <% details?.semesters?.forEach(sem => { %>
+                <option value="<%= sem?.semesterKey %>">
+                  <%= sem?.Name %>
+                </option>
+                <% }); %>
+              </select>
+              <select id="branch" name="Branch">
+                <% details?.branches?.forEach(sem => { %>
+                <option value="<%= sem?.branchKey %>">
+                  <%= sem?.branchFullName %>
+                </option>
+                <% }); %>
+              </select>
+            </div>
             <input
               type="file"
               class="form-control"
@@ -81,9 +82,6 @@
               id="input-file"
             />
             <input type="submit" value="submit" class="btn-upload" />
-            <input id="semHidden" type="hidden" name="semester" value="" />
-            <input id="branchHidden" type="hidden" name="branch" value="" />
-            <input id="batchHidden" type="hidden" name="batch" value="" />
           </div>
         </form>
       </div>

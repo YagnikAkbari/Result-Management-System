@@ -30,7 +30,6 @@ exports.createSubject = async (req) => {
       semester: semesterObj?._id,
       is_elective,
     });
-    console.log("newSemetes:----", newSubject, newSubjectAssignment);
 
     await newSubject.save();
     await newSubjectAssignment.save();

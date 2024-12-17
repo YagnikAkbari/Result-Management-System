@@ -16,8 +16,6 @@ exports.getStudentPage = (req, res, next) => {
 
 exports.getProfile = async (req, res, next) => {
   try {
-    console.log("dataloginuser:::---", req.session.login);
-
     const { username, _id: userId } = req.session.login;
     const user = await Login.findOne({ username: username });
     const student = await Student.findOne({ userId })
@@ -49,8 +47,6 @@ exports.getProfile = async (req, res, next) => {
         collegeEmail,
       };
     }
-
-    console.log("userDatatlOa:::::---", userData);
 
     if (!user) {
       return;
