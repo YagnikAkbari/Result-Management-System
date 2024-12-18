@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.post("/semester", auth, semesterController.createSemester);
 
+router.get("/semesters", auth, semesterController.getBranchSemester);
+
 module.exports = router;

@@ -1,67 +1,53 @@
 const Login = require("../model/login");
 const Result = require("../model/result");
 const Student = require("../model/student");
+const Batch = require("../model/batch");
+const Branch = require("../model/branch");
 
 const { getPopulatedSubjectData } = require("../config/helpers");
 
-const mongoose = require("mongoose");
-
-exports.getFacultyPage = (req, res, next) => {
-  res.render("faculty/faculty", {
-    pageTitle: "Faculty",
-    result: 0,
-    semester: "",
-    division: "",
-    subject: "",
-    batch: "",
-    branch: "",
-  });
+exports.getFacultyPage = async (req, res, next) => {
+  try {
+    const batches = await Batch.find();
+    const branches = await Branch.find();
+    res.render("faculty/faculty", {
+      pageTitle: "Faculty",
+      result: 0,
+      semester: "",
+      division: "",
+      subject: "",
+      batches: batches.sort((b, a) => a.batchName - b.batchName),
+      branches: branches.sort((b, a) => a.branchFullName - b.branchFullName),
+    });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
-exports.postFacultyResult = (req, res, next) => {
-  const { semester, division, subject, batch, branch } = req.body;
-  const [subId, subName] = subject.split("|");
-  const promises = [];
+exports.postFacultyResult = async (req, res, next) => {
+  try {
+    const { semester, division, subject, batch, branch } = req.body;
 
-  for (let i = 1; i <= 8; i++) {
-    const dynamicRes = `Result${i}_${branch}`;
-    let Model;
-    try {
-      Model = mongoose.model(dynamicRes);
-    } catch (error) {
-      continue;
-    }
+    const results = await Result.find({ semester, division, branch });
 
-    const promise = Model.find({
-      Sem: semester,
-      Div: division,
-      Batch: batch,
-      Branch: branch,
-      ["Sub" + subId + "_Name"]: subName,
+    return res.render("faculty/faculty", {
+      pageTitle: "Result",
+      result: mergedResults,
+      subName: ["Sub" + subject + "_Name"],
+      subMarks: ["Sub" + subject + "_Marks"],
+      semester: semester,
+      division: division,
+      subject: subject,
+      batch: batch,
+      branch: branch,
     });
-    promises.push(promise);
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   }
-
-  Promise.all(promises)
-    .then((results) => {
-      const mergedResults = [].concat(...results);
-      return res.render("faculty/faculty", {
-        pageTitle: "Result",
-        result: mergedResults,
-        subName: ["Sub" + subId + "_Name"],
-        subMarks: ["Sub" + subId + "_Marks"],
-        semester: semester,
-        division: division,
-        subject: subject,
-        batch: batch,
-        branch: branch,
-      });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
 };
 
 exports.getGradeHistory = (req, res, next) => {

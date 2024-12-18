@@ -64,64 +64,52 @@
       </div>
     </nav>
     <div class="selection--search">
-      <select
-        id="batch"
-        onChange="populateDropdown2()"
-        name="Batch"
-        class="drop-custom"
-      >
-      <option value="batch" selected>Batch</option>
-      <option value="2020-24" <%= batch === "2020-24" ? 'selected' : '' %>>2020-24</option>
-      <option value="2021-25" <%= batch === "2021-25" ? 'selected' : '' %>>2021-25</option>
-      </select>
-
-      <select
-      id="branch"
-      onChange="populateDropdown2()"
-      name="Branch"
-      class="drop-custom"
-      >
-      <option value="branch" selected>Branch</option>
-      <option value="CE" <%= branch === "CE" ?  'selected' : '' %>>CE</option>
-      <option value="IT" <%= branch === "IT" ? 'selected' : '' %>>IT</option>
-      </select>
-
-      <select
-        id="semester"
-        onchange="populateDropdown2()"
-        name="Division"
-        class="drop-custom"
-      >
-      <option value="sem" selected>Semester</option>
-      <option value="4" <%= semester === '4' ? 'selected' : '' %>>SEM 4</option> 
-      <option value="5" <%= semester === '5' ? 'selected' : '' %>>SEM 5</option>
-      <option value="6" <%= semester === '6' ? 'selected' : '' %>>SEM 6</option>
-      </select>
-
-      <select
-        id="division"
-        onChange="populateDropdown2()"
-        name="Division"
-        class="drop-custom"
-      >
-        <option value="div" selected>Division</option>
-        <option value="B" <%= division === 'B' ? 'selected' : '' %>>B</option>
-        <option value="D" <%= division === 'D' ? 'selected' : '' %>>D</option>
-        <option value="E" <%= division === 'E' ? 'selected' : '' %>>E</option>
-        <option value="b" <%= division === 'b' ? 'selected' : '' %>>b</option>
-        <option value="I" <%= division === 'I' ? 'selected' : '' %>>I</option>
-        <option value="J" <%= division === 'J' ? 'selected' : '' %>>J</option>
-      </select>
-
-      <select id="subjects" name="Subject">
-        <option value="">Subject</option>
-      </select>
       <form id="myForm" action="/result" method="post">
-        <input id="semHidden" type="hidden" name="semester" value="" />
-        <input id="divHidden" type="hidden" name="division" value="" />
-        <input id="subHidden" type="hidden" name="subject" value="" />
-        <input id="batchHidden" type="hidden" name="batch" value="" />
-        <input id="branchHidden" type="hidden" name="branch" value="" />
+        <select
+          id="batch"
+          name="batch" 
+          class="drop-custom text-uppercase"
+        >
+        <option value="default" selected>Batch</option>
+        <% batches?.forEach(batch => { %>
+          <option value="<%= batch?._id %>"><%= batch?.batchName %></option>
+          <% }); %>
+        
+        </select>
+
+        <select
+        id="branch"
+        onchange="onChangeBranch()"
+        name="branch"
+        class="drop-custom text-uppercase"
+        >
+        <option value="default" selected>Branch</option>
+          <% branches?.forEach(branche => { %>
+          <option value="<%= branche?._id %>"><%= branche?.branchFullName %></option>
+          <% }); %>
+        </select>
+
+        <select
+          id="semester"
+          name="semester"
+          onchange="onChangeSemester()"
+          class="drop-custom text-uppercase"
+        >
+        <option value="default" selected>Semester</option>      
+        </select>
+
+        <select
+          id="division"
+          name="division"
+          class="drop-custom text-uppercase"
+        >
+          <option value="default" selected>Division</option>
+        </select>
+
+        <select id="subject" name="Subject" class="drop-custom text-uppercase">
+          <option value="default" selected>Subject</option>
+        </select>
+        
         <input
           type="submit"
           name="btnSearch"
@@ -182,194 +170,10 @@
       crossorigin="anonymous"
     ></script>
 
-    <script>
-      function populateDropdown2() {
-        let selectedValue = document.getElementById("semester").value;
-
-        let selectedBranchValue = document.getElementById("branch").value;
-
-        let dropdown2Options = document.getElementById("subjects").options;
-
-        dropdown2Options.length = 0;
-
-        if (selectedBranchValue === "CE") {
-          if (selectedValue === "4") {
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "POM",
-            "1|PrinciplesOfManagement"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "PSNM",
-            "2|ProbabilityStatasticAndNumericalMethods"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "COA",
-            "3|ComputerOrganizationAndArchitecture"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "OS",
-            "4|OperatingSystems"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "OOP",
-            "5|ObjectOrientedProgrammingUsingJava"
-          );
-        } else if (selectedValue === "5") {
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "SE",
-            "1|SoftwareEngineering"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "MAP",
-            "2|MicroprocessorArchitectureAndProgramming"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "TOC",
-            "3|TheoryOfComputation"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "DAA",
-            "4|DesignAndAnalysisOfAlgorithm"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "CN",
-            "5|ComputerNetworks"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "AJAVA",
-            "6|AdvancedJavaProgramming"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "DOTNET",
-            "6|DotNetTechnology"
-          );
-        } else if (selectedValue === "6") {
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "AI",
-            "1|ArtificialIntelligence"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "PYP",
-            "2|PythonProgramming"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "CNS",
-            "3|CryptographyAndNetworkSecurity"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "ML",
-            "4|MachineLearning"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "AA",
-            "4|AdvancedAlgorithms"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "AP",
-            "4|AndroidProgramming"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "IOS",
-            "4|iOSProgramming"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "SC",
-            "5|SoftComputing"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "IOT",
-            "5|InternetOfThings"
-          );
-        }
-      } else if (selectedBranchValue === 'IT') {
-        if (selectedValue === "4") {
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "POM",
-            "1|PrinciplesOfManagement"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "PSNM",
-            "2|ProbabilityStatasticAndNumericalMethods"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "COA",
-            "3|ComputerOrganizationAndArchitecture"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "OS",
-            "4|OperatingSystems"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "OOP",
-            "5|ObjectOrientedProgrammingUsingJava"
-          );
-        } else if (selectedValue === "5") {
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "SE",
-            "1|SoftwareEngineering"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "SOA",
-            "2|ServiceOrientrdArchitecture"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "FLAT",
-            "3|FormalLanguageAndAutomataTheory"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "FOA",
-            "4|FundamentalOfAlgorithms"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "DCN",
-            "5|DataComunicationAndNetworking"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "AJAVA",
-            "6|AdvancedJavaProgramming"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "DOTNET",
-            "6|DotNetTechnology"
-          );
-          dropdown2Options[dropdown2Options.length] = new Option(
-            "PYP",
-            "6|PythonProgramming"
-          );
-        }
-      }
-    }
-    </script>
-
-    <script>
-      const semesterDropdown = document.getElementById("semester");
-      const divisionDropdown = document.getElementById("division");
-      const subjectsDropdown = document.getElementById("subjects");
-      const batchDropdown = document.getElementById("batch");
-      const branchDropdown = document.getElementById("branch");
-
-      function handleDropdownChange() {
-        const semesterSelectedValue = semesterDropdown.value;
-        const divisionSelectedValue = divisionDropdown.value;
-        const subjectsSelectedValue = subjectsDropdown.value;
-        const batchSelectedValue = batchDropdown.value;
-        const branchSelectedValue = branchDropdown.value;
-
-        document.getElementById("semHidden").value = semesterSelectedValue;
-        document.getElementById("divHidden").value = divisionSelectedValue;
-        document.getElementById("subHidden").value = subjectsSelectedValue;
-        document.getElementById("batchHidden").value = batchSelectedValue;
-        document.getElementById("branchHidden").value = branchSelectedValue;
-      }
-
-      semesterDropdown.addEventListener("change", handleDropdownChange);
-      divisionDropdown.addEventListener("change", handleDropdownChange);
-      subjectsDropdown.addEventListener("change", handleDropdownChange);
-      batchDropdown.addEventListener("change", handleDropdownChange);
-      branchDropdown.addEventListener("change", handleDropdownChange);
-    </script>
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="/scripts/faculty.js"></script>
 
     <script>
       document.querySelector("#download-list").addEventListener("click", exportFailedResultsToExcel);
