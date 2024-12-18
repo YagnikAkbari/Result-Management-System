@@ -171,8 +171,10 @@ exports.postReset = async (req, res, next) => {
     const tokenHex = token.toString("hex");
     const user = await Login.findOne({ Email: email });
 
-    req.flash("success", "✌️ Please Check Your Mail Box For Reset Password.");
-    res.redirect("/reset");
+    res.render("auth/reset", {
+      pageTitle: "Reset Password",
+      errorMessage: "✌️ Please Check Your Mail Box For Reset Password.",
+    });
 
     user.resetToken = tokenHex;
     user.resetTokenExpiration = Date.now() + 3600000;
@@ -254,8 +256,10 @@ exports.postNewPassword = async (req, res, next) => {
     user.resetToken = undefined;
     user.resetTokenExpiration = undefined;
 
-    req.flash("success", "✌️ Your password has been changed!");
-    res.redirect("/login");
+    res.render("auth/login", {
+      pageTitle: "Login | Result Management System",
+      successMessage: "✌️ Your password has been changed!",
+    });
     return user.save();
   } catch (err) {
     const error = new Error(err);

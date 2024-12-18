@@ -1,3 +1,5 @@
+const Subject = require("../model/subject");
+
 const compareColumns = (xlData, ResultModel) => {
   const dbColumns = Object.keys(ResultModel.schema.paths).filter(
     (col) => col !== "_id" && col !== "__v"
@@ -67,9 +69,22 @@ const convertToInsertManyMultipleObject = (data, seprator) => {
   return finalObj;
 };
 
+const getPopulatedSubjectData = async (subCodes) => {
+  return await Promise.all(
+    subCodes?.map(async (subCode) => {
+      const subject = await Subject.findOne({ subjectCode: subCode });
+
+      return {
+        ...(subject?._doc || {}),
+      };
+    })
+  );
+};
+
 module.exports = {
   compareColumns,
   compareExcelColumns,
   convertToInsertManyObject,
   convertToInsertManyMultipleObject,
+  getPopulatedSubjectData,
 };

@@ -3,7 +3,7 @@ const Student = require("../model/student");
 const Branch = require("../model/branch");
 const Result = require("../model/result");
 const Semester = require("../model/semester");
-const Subject = require("../model/subject");
+const { getPopulatedSubjectData } = require("../config/helpers");
 
 exports.getStudentPage = async (req, res) => {
   try {
@@ -107,16 +107,16 @@ exports.getResult = async (req, res, next) => {
     }
     let resultData = [];
     if (Object?.keys(result?.result)?.length) {
-      resultData = await Promise.all(
-        Object?.keys(result?.result)?.map(async (subCode) => {
-          const subject = await Subject.findOne({ subjectCode: subCode });
-
-          return {
-            ...(subject?._doc || {}),
-            subjectMarks: result?.result[subCode],
-          };
-        })
+      let subjects = await getPopulatedSubjectData(
+        Object?.keys(result?.result)
       );
+
+      resultData = subjects?.map((subject) => {
+        return {
+          ...subject,
+          subjectMarks: result?.result[subject?.subjectCode],
+        };
+      });
     }
 
     result.result = resultData;

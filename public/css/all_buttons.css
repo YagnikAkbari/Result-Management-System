@@ -77,9 +77,7 @@
 .personal {
   position: absolute;
   right: 0;
-  top: 16.6rem;
-  width: 21%;
-  left: 70.23rem;
-  height: 2rem;
+  top: 4rem;
   border-radius: 5px;
+  padding: 4px 8px;
 }

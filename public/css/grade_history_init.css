@@ -1,9 +1,9 @@
 #info-search {
+  position: relative;
   display: flex;
   justify-content: space-between;
   max-width: 77rem;
-  margin: 6.188rem auto;
-  margin-right: 6.10rem;
+  margin: 2rem auto;
   font-family: var(--font-inter);
 }
 #search-bar {
@@ -69,13 +69,16 @@
 }
 #sem-details {
   margin: auto;
-  width: 75vw;
   font-family: var(--font-inter);
 }
 .sem {
   display: flex;
   flex-direction: column;
   margin: auto;
+}
+.sem .upper {
+  margin: auto;
+  width: 72rem;
 }
 .sem--duration {
   color: var(--grey);

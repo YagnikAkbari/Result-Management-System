@@ -118,18 +118,17 @@
               <td scope="row"><%= j %>.</td>
               <td><%= result[i]["Sub" + j + "_Code"] %></td>
               <td><%= result[i]["Sub" + j + "_Name"] %></td>
-             <% if (result[i]["Sub" + j + "_Marks"] === 'NA') { %>
-                <td class="marks">-</td>
+              <% if (result[i]["Sub" + j + "_Marks"] === 'NA') { %>
+              <td class="marks">-</td>
               <% } else { %>
-                <td class="marks"><%= result[i]["Sub" + j + "_Marks"] %></td>
-              <% } %>
-              <% if (result[i]["Sub" + j + "_Marks"] >= 12) { %>
+              <td class="marks"><%= result[i]["Sub" + j + "_Marks"] %></td>
+              <% } %> <% if (result[i]["Sub" + j + "_Marks"] >= 12) { %>
               <td><img src="images/pass.svg" alt="pass" class="pass" /></td>
               <% } else if (result[i]["Sub" + j + "_Marks"] < 12) { %>
               <td><img src="images/remid.svg" alt="remid" class="remid" /></td>
               <% } else if (result[i]["Sub" + j + "_Marks"] == 'NA') { %>
-                <td>-</td>
-             <% } else { %>
+              <td>-</td>
+              <% } else { %>
               <td>
                 <img src="images/absent.svg" alt="absent" class="absent" />
               </td>
@@ -145,7 +144,7 @@
       <div id="personal-info">
         <div>
           <label for="">Name:</label><br />
-          <p>--</p>
+          <p>------</p>
         </div>
         <div>
           <label for="">Division:</label><br />
@@ -176,7 +175,7 @@
         </button>
       </form>
     </div>
-    <p class="personal user-message error-stmt">Please enter valid Enrollment Number!</p>
+    <p class="personal user-message error-stmt"><%= errorMessage %></p>
     <% } %>
   </body>
 </html>

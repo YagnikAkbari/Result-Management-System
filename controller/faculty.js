@@ -1,4 +1,8 @@
 const Login = require("../model/login");
+const Result = require("../model/result");
+const Student = require("../model/student");
+
+const { getPopulatedSubjectData } = require("../config/helpers");
 
 const mongoose = require("mongoose");
 
@@ -63,6 +67,8 @@ exports.postFacultyResult = (req, res, next) => {
 exports.getGradeHistory = (req, res, next) => {
   res.render("faculty/grade_history", {
     pageTitle: "Grade History",
+    result: 0,
+    student: {},
   });
 };
 
@@ -79,96 +85,69 @@ exports.getGradeHistorySearched = (req, res, next) => {
   });
 };
 
-// exports.postGradeHistory = (req, res, next) => {
-//   const enr = req.body.Enrollment;
+exports.postGradeHistory = async (req, res, next) => {
+  try {
+    const { Enrollment } = req.body;
 
-//   function getUserBranch(enr) {
-//     return Login.findOne({ username: enr }).exec();
-//   }
+    if (!Enrollment) {
+      return res.render("faculty/grade_history", {
+        pageTitle: "Grade History",
+        errorMessage: "",
+        result: 0,
+        student: {},
+      });
+    }
 
-//   getUserBranch(enr).then(user => {
+    const user = await Login.findOne({ username: Enrollment });
+    const student = await Student.findOne({ userId: user?._id })
+      .populate("Div")
+      .populate("Branch")
+      .populate("Batch");
 
-//   })
+    if (!user || !student) {
+      return res.render("faculty/grade_history", {
+        pageTitle: "Grade History",
+        errorMessage: "Please enter valid Enrollment Number!",
+        result: 0,
+        student: {},
+      });
+    }
 
-//   const promises = [];
-//   for (let i = 1; i <= 8; i++) {
-//     const dynamicRes = `Result${i}_${newBranch}`;
-//     let Model;
-//     try {
-//       Model = mongoose.model(dynamicRes);
-//     } catch (error) {
-//       console.log(`Model ${dynamicRes} not found.`);
-//       continue;
-//     }
-//     promises.push(Model.find({ Enrollment: enr }));
-//   }
+    const results = await Result.find({ student: student?._id }).populate(
+      "semester"
+    );
+    let finalResult = [];
 
-//   Promise.all(promises)
-//     .then(results => {
-//       if (!results) {
-//         return req.flash("error", "❌ Enrollment Number is incorrect.");
-//       }
-//       const combinedResults = results.flat();
-//       console.log(combinedResults);
-//       res.render("faculty/grade_history_searched", {
-//         pageTitle: "Grade History",
-//         result: combinedResults,
-//       });
-//     })
-//     .catch(err => {
-//       const error = new Error(err);
-//       error.httpStatusCode = 500;
-//       return next(error);
-//     });
-// };
-
-exports.postGradeHistory = (req, res, next) => {
-  const enr = req.body.Enrollment;
-
-  function getUserBranch(enr) {
-    return Login.findOne({ username: enr }).exec();
-  }
-
-  getUserBranch(enr)
-    .then((user) => {
-      if (!user) {
-        return res.render("faculty/grade_history_searched", {
-          pageTitle: "Grade History",
-          result: 0,
-        });
-      }
-      const newBranch = user.Branch;
-
-      const promises = [];
-      for (let i = 1; i <= 8; i++) {
-        const dynamicRes = `Result${i}_${newBranch}`;
-        let Model;
-        try {
-          Model = mongoose.model(dynamicRes);
-        } catch (error) {
-          console.log(`Model ${dynamicRes} not found.`);
-          continue;
-        }
-        promises.push(Model.find({ Enrollment: enr }));
-      }
-
-      Promise.all(promises)
-        .then((results) => {
-          const combinedResults = results.flat();
-          res.render("faculty/grade_history_searched", {
-            pageTitle: "Grade History",
-            result: combinedResults,
-          });
+    if (results && results?.length) {
+      finalResult = await Promise.all(
+        results?.map(async (result) => {
+          if (Object?.keys(result?.result)?.length) {
+            let subjects = await getPopulatedSubjectData(
+              Object?.keys(result?.result)
+            );
+            let subjectWithmarks = subjects?.map((subject) => {
+              return {
+                ...subject,
+                subjectMarks: result?.result[subject?.subjectCode],
+              };
+            });
+            return {
+              ...result?._doc,
+              result: subjectWithmarks,
+            };
+          }
         })
-        .catch((err) => {
-          const error = new Error(err);
-          error.httpStatusCode = 500;
-          return next(error);
-        });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+      );
+    }
+
+    res.render("faculty/grade_history", {
+      pageTitle: "Grade History",
+      result: finalResult,
+      student: { ...student?._doc, Name: user?.Name },
     });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
