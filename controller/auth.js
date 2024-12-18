@@ -152,7 +152,7 @@ exports.postResetFirstTime = async (req, res, next) => {
 };
 
 exports.getReset = (req, res, next) => {
-  let message = req.flash("error");
+  let message = req.flash("success");
   if (message.length > 0) {
     message = message[0];
   } else {
@@ -164,106 +164,104 @@ exports.getReset = (req, res, next) => {
   });
 };
 
-exports.postReset = (req, res, next) => {
-  const email = req.body.email;
-  crypto.randomBytes(32, (err, buffer) => {
-    if (err) {
-      console.log(err);
-      return res.redirect("/reset");
-    }
-    const token = buffer.toString("hex");
-    Login.findOne({ Email: email })
-      .then((user) => {
-        if (!user) {
-          req.flash("error", "😡Looks like your email address doesn't exist.");
-          return res.redirect("/reset");
-        }
-        user.resetToken = token;
-        user.resetTokenExpiration = Date.now() + 3600000;
-        return user.save();
-      })
-      .then((result) => {
-        transporter.sendMail({
-          to: email,
-          from: "shop@node-gmail.com",
-          subject: "Password reset",
-          html: `
+exports.postReset = async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    const token = crypto.randomBytes(32);
+    const tokenHex = token.toString("hex");
+    const user = await Login.findOne({ Email: email });
+
+    req.flash("success", "✌️ Please Check Your Mail Box For Reset Password.");
+    res.redirect("/reset");
+
+    user.resetToken = tokenHex;
+    user.resetTokenExpiration = Date.now() + 3600000;
+    await user.save();
+
+    transporter.sendMail({
+      to: email,
+      from: "shop@node-gmail.com",
+      subject: "Password reset",
+      html: `
           <p>You requested a password reset</p>
-          <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+          <p>Click this <a href="http://localhost:${
+            process.env.PORT || 8080
+          }/reset/${tokenHex}">link</a> to set a new password.</p>
           `,
-        });
-        if (result) {
-          req.flash("error1", "✌️ Email is send");
-          return res.redirect("/login");
-        }
-      })
-      .then((res) => {
-        return;
-      })
-      .catch((err) => {
-        // const error = new Error(err);
-        err.httpStatusCode = 500;
-        return next(err);
-      });
-  });
-};
-
-exports.getNewPassword = (req, res, next) => {
-  let message = req.flash("error");
-  if (message.length > 0) {
-    message = message[0];
-  } else {
-    message = null;
+    });
+  } catch (err) {
+    console.log(err);
+    const error = new Error(err);
+    err.httpStatusCode = 500;
+    return next(error);
   }
-  const token = req.params.token;
-  Login.findOne({
-    resetToken: token,
-    resetTokenExpiration: { $gt: Date.now() },
-  })
-    .then((user) => {
-      res.render("auth/new-password", {
-        userId: user._id.toString(),
-        passwordToken: token,
-        pageTitle: "Reset Password",
-        errorMessage: message,
-      });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
 };
 
-exports.postNewPassword = (req, res, next) => {
-  const newPassword = req.body.password;
-  const userId = req.body.userId;
-  const passwordToken = req.body.passwordToken;
-
-  Login.findOne({
-    resetToken: passwordToken,
-    resetTokenExpiration: { $gt: Date.now() },
-    _id: userId,
-  })
-    .then((user) => {
-      if (!user) {
-        req.flash("error", "Invalid Option!!");
-        return res.redirect("/login");
-      }
-      user.password = newPassword;
-      user.resetToken = undefined;
-      user.resetTokenExpiration = undefined;
-      return user.save();
-    })
-    .then((result) => {
-      req.flash("error1", "✌️ Your password has been changed!");
-      return res.redirect("/login");
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+exports.getNewPassword = async (req, res) => {
+  try {
+    let message = req.flash("error");
+    if (message.length > 0) {
+      message = message[0];
+    } else {
+      message = null;
+    }
+    const token = req.params.token;
+    const user = await Login.findOne({
+      resetToken: token,
+      resetTokenExpiration: { $gt: Date.now() },
     });
+    if (!user) {
+      req.flash("error", "Token Expired.");
+      return res.redirect("/login");
+    }
+    res.render("auth/new-password", {
+      userId: user._id.toString(),
+      passwordToken: token,
+      pageTitle: "Reset Password",
+      errorMessage: message,
+    });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
+};
+
+exports.postNewPassword = async (req, res, next) => {
+  try {
+    const {
+      password: newPassword,
+      confirmPass: newConfirmPassword,
+      passwordToken,
+      userId,
+    } = req.body;
+
+    if (newPassword.trim() !== newConfirmPassword.trim()) {
+      req.flash("error", "New Password And Confirm Passowrd Is Not Matched!");
+      return res.redirect(`/reset/${passwordToken}`);
+    }
+    const user = await Login.findOne({
+      resetToken: passwordToken,
+      resetTokenExpiration: { $gt: Date.now() },
+      _id: userId,
+    });
+
+    if (!user) {
+      req.flash("error", "Invalid Option!!");
+      return res.redirect("/login");
+    }
+    user.password = newPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpiration = undefined;
+
+    req.flash("success", "✌️ Your password has been changed!");
+    res.redirect("/login");
+    return user.save();
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
 exports.postLogout = (req, res, next) => {

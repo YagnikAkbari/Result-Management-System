@@ -6,6 +6,7 @@ const {
   convertToInsertManyObject,
 } = require("../config/helpers");
 const Login = require("../model/login");
+const Faculty = require("../model/faculty");
 const Student = require("../model/student");
 const fs = require("fs");
 const { ignoreColumns } = require("../config/constants");
@@ -252,6 +253,42 @@ exports.postResultData = async (req, res) => {
         res.redirect("/admin");
       }
     });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.createFaculty = async (req, res, next) => {
+  try {
+    const {
+      username,
+      password,
+      userType,
+      Name,
+      Email,
+      MobileNo,
+      colloegeIdNo,
+      collegeEmail,
+    } = req.body;
+    const newUser = new Login({
+      username,
+      password,
+      userType,
+      Name,
+      Email,
+      MobileNo,
+    });
+    console.log("facultylogin", newUser);
+    
+    await newUser.save();
+    const newFaculty = await new Faculty({
+      userId: newUser?._id,
+      colloegeIdNo,
+      collegeEmail,
+    });
+    
+    console.log("facultylogin", newFaculty);
+    await newFaculty.save();
   } catch (err) {
     console.log(err);
   }

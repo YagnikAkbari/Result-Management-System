@@ -17,12 +17,6 @@ const facultySchema = new Schema({
     unique: true,
     lowercase: true,
   },
-  Subjects: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Subject",
-    },
-  ],
 });
 
 module.exports = mongoose.model("Faculty", facultySchema);

@@ -20,6 +20,8 @@ router.get("/admin", auth, adminController.getAdminPage);
 
 router.get("/studentData", auth, adminController.getStudentData);
 
+router.post("/faculty/create", auth, adminController.createFaculty);
+
 router.post(
   "/studentData",
   auth,
