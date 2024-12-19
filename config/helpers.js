@@ -81,10 +81,60 @@ const getPopulatedSubjectData = async (subCodes) => {
   );
 };
 
+const convertArrToExcelData = (data) => {
+  let headers = Object?.keys(data[0]);
+  let body = data?.map((item) => {
+    return Object?.values(item)
+      ?.map((value) => {
+        if (typeof value === "string") {
+          return value;
+        } else if (typeof value === "object") {
+          return Object?.values?.(value);
+        } else {
+          return null;
+        }
+      })
+      ?.flatMap((item) => item);
+  });
+  return [headers, body];
+};
+
+const convertToFlatObj = (dataObj) => {
+  Object?.keys(dataObj)?.map((key) => {
+    if (
+      dataObj[key] &&
+      typeof dataObj[key] === "object" &&
+      !Array?.isArray(dataObj[key])
+    ) {
+      convertToFlatObj(dataObj[key]);
+    } else {
+      return { ...dataObj[key] };
+    }
+  });
+};
+
+const convertFlatArrFromObjs = (data) => {
+  return data?.map((item) => {
+    let data = {};
+    if (item && Object?.keys(item) && Object?.keys(item)?.length) {
+      Object?.keys(item)?.map((key) => {
+        if (typeof item[key] === "object" && !Array?.isArray(item[key])) {
+          data = convertToFlatObj(item[key]);
+        } else {
+          data = { ...data, [key]: item[key] };
+        }
+      });
+    }
+    return data;
+  });
+};
+
 module.exports = {
   compareColumns,
   compareExcelColumns,
   convertToInsertManyObject,
   convertToInsertManyMultipleObject,
   getPopulatedSubjectData,
+  convertArrToExcelData,
+  convertFlatArrFromObjs,
 };

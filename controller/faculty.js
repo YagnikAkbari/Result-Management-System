@@ -6,9 +6,14 @@ const Branch = require("../model/branch");
 const Subject = require("../model/subject");
 const subjectAssignment = require("../model/subjectAssignment");
 const mongoose = require("mongoose");
+const fs = require("fs");
 const { ObjectId } = mongoose.Types;
 
-const { getPopulatedSubjectData } = require("../config/helpers");
+const {
+  getPopulatedSubjectData,
+  convertArrToExcelData,
+  convertFlatArrFromObjs,
+} = require("../config/helpers");
 
 exports.getFacultyPage = async (req, res, next) => {
   try {
@@ -40,6 +45,7 @@ exports.getFacultyPage = async (req, res, next) => {
 exports.postFacultyResult = async (req, res, next) => {
   try {
     const { semester, division, subject, batch, branch } = req.body;
+    const { is_download } = req.query;
     const batches = await Batch.find();
     const branches = await Branch.find();
     const branchobj = await Branch.findById(branch)
@@ -86,22 +92,48 @@ exports.postFacultyResult = async (req, res, next) => {
       };
     });
 
-    return res.render("faculty/faculty", {
-      pageTitle: "Result",
-      results: finalResults,
-      semesters: branchobj?.semesters ?? [],
-      divisions: branchobj?.divisions ?? [],
-      subjects: subjectAssesmentObjs,
-      batches: batches.sort((b, a) => a.batchName - b.batchName),
-      branches: branches.sort((b, a) => a.branchFullName - b.branchFullName),
-      filters: {
-        semester: new ObjectId(semester),
-        division: new ObjectId(division),
-        subject: new ObjectId(subject),
-        batch: new ObjectId(batch),
-        branch: new ObjectId(branch),
-      },
-    });
+    if (is_download) {
+      console.log(
+        "convertArrToExcelData",
+        convertFlatArrFromObjs(finalResults)
+      );
+      // console.log("convertArrToExcelData", convertArrToExcelData(finalResults));
+
+      // const workbook = XLSX.utils.book_new(convertArrToExcelData(finalResults));
+      // const worksheet = XLSX.utils.aoa_to_sheet();
+      // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+      // const tempFilePath = path.join(__dirname, "temp.xlsx");
+      // XLSX.writeFile(workbook, tempFilePath);
+      // res.download(tempFilePath, "data.xlsx", (err) => {
+      //   if (err) {
+      //     console.error("Error sending file:", err);
+      //     res.status(500).send("Error downloading file");
+      //   }
+
+      //   fs.unlink(tempFilePath, (unlinkErr) => {
+      //     if (unlinkErr) console.error("Error deleting temp file:", unlinkErr);
+      //   });
+      // });
+      return res.status(200).send(finalResults);
+    } else {
+      return res.render("faculty/faculty", {
+        pageTitle: "Result",
+        results: finalResults,
+        semesters: branchobj?.semesters ?? [],
+        divisions: branchobj?.divisions ?? [],
+        subjects: subjectAssesmentObjs,
+        batches: batches.sort((b, a) => a.batchName - b.batchName),
+        branches: branches.sort((b, a) => a.branchFullName - b.branchFullName),
+        filters: {
+          semester: new ObjectId(semester),
+          division: new ObjectId(division),
+          subject: new ObjectId(subject),
+          batch: new ObjectId(batch),
+          branch: new ObjectId(branch),
+        },
+      });
+    }
   } catch (err) {
     const error = new Error(err);
     error.httpStatusCode = 500;
