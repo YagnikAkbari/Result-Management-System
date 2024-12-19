@@ -278,7 +278,7 @@ exports.createFaculty = async (req, res, next) => {
       Email,
       MobileNo,
     });
-    console.log("facultylogin", newUser);
+    
     
     await newUser.save();
     const newFaculty = await new Faculty({
@@ -287,7 +287,7 @@ exports.createFaculty = async (req, res, next) => {
       collegeEmail,
     });
     
-    console.log("facultylogin", newFaculty);
+    
     await newFaculty.save();
   } catch (err) {
     console.log(err);

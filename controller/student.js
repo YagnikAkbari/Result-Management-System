@@ -120,7 +120,7 @@ exports.getResult = async (req, res, next) => {
     }
 
     result.result = resultData;
-    console.log("studnetresultresult:::----", result);
+    
     return res.render("student/result", {
       pageTitle: `${req.query.semester} Result`,
       result,

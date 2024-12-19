@@ -10,8 +10,6 @@ router.post("/result", auth, facultyController.postFacultyResult);
 
 router.get("/grade_history", auth, facultyController.getGradeHistory);
 
-router.get("/grade_history", auth, facultyController.getGradeHistorySearched);
-
 router.post("/grade_history", auth, facultyController.postGradeHistory);
 
 module.exports = router;

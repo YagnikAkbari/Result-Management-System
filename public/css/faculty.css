@@ -20,7 +20,7 @@ select {
   display: flex;
   align-items: baseline;
   position: absolute;
-  top: 11rem;
+  top: 6.5rem;
   left: 6.5rem;
 }
 
@@ -32,4 +32,8 @@ select {
   color: #699cff;
   gap: 2rem;
   transform: translate(-100px, 100px);
+}
+
+.faculty-table {
+  margin: 7rem auto 2rem auto;
 }

@@ -16,23 +16,10 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.getLogin = (req, res, next) => {
-  let message = req.flash("error");
-  if (message.length > 0) {
-    message = message[0];
-  } else {
-    message = null;
-  }
-  let successMessage = req.flash("success");
-  if (successMessage.length > 0) {
-    successMessage = successMessage[0];
-  } else {
-    successMessage = null;
-  }
-
   res.render("auth/login", {
     pageTitle: "Login | Result Management System",
-    errorMessage: message,
-    successMessage,
+    errorMessage: "",
+    successMessage: "",
   });
 };
 
@@ -43,11 +30,12 @@ exports.postLogin = async (req, res, next) => {
     const user = await Login.findOne({ username: username });
 
     if (!user) {
-      req.flash(
-        "error",
-        "😡Looks like you are not registered with us. Please Contact Admin."
-      );
-      return res.status(401).redirect("/login");
+      return res.render("auth/login", {
+        pageTitle: "Login | Result Management System",
+        errorMessage:
+          "😡Looks like you are not registered with us. Please Contact Admin.",
+        successMessage: "",
+      });
     }
 
     if (user.password !== password) {

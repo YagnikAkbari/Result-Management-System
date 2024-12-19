@@ -23,20 +23,16 @@ exports.getBranchSemester = async (req, res) => {
   try {
     const { branch, semester } = req.query;
 
-    console.log("branchbranchbranch:::", branch, semester);
-
     const branchobj = await Branch.findById(branch)
       .populate("semesters")
       .populate("divisions");
-    console.log("branchbranchbranch:::", branchobj);
+
     let subjectAssesmentObjs = [];
     if (semester !== "default") {
       subjectAssesmentObjs = await subjectAssignment
         .find({ semester, branch })
         .populate("subject");
     }
-
-    console.log("branchbranchbranch:::", branchobj, subjectAssesmentObjs);
 
     return res.status(200).json({
       semesters: branchobj?.semesters ?? [],

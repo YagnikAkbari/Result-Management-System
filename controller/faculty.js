@@ -3,6 +3,10 @@ const Result = require("../model/result");
 const Student = require("../model/student");
 const Batch = require("../model/batch");
 const Branch = require("../model/branch");
+const Subject = require("../model/subject");
+const subjectAssignment = require("../model/subjectAssignment");
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 
 const { getPopulatedSubjectData } = require("../config/helpers");
 
@@ -12,12 +16,19 @@ exports.getFacultyPage = async (req, res, next) => {
     const branches = await Branch.find();
     res.render("faculty/faculty", {
       pageTitle: "Faculty",
-      result: 0,
-      semester: "",
-      division: "",
-      subject: "",
+      results: 0,
+      semesters: [],
+      divisions: [],
+      subjects: [],
       batches: batches.sort((b, a) => a.batchName - b.batchName),
       branches: branches.sort((b, a) => a.branchFullName - b.branchFullName),
+      filters: {
+        semester: "default",
+        division: "default",
+        subject: "default",
+        batch: "default",
+        branch: "default",
+      },
     });
   } catch (err) {
     const error = new Error(err);
@@ -29,19 +40,67 @@ exports.getFacultyPage = async (req, res, next) => {
 exports.postFacultyResult = async (req, res, next) => {
   try {
     const { semester, division, subject, batch, branch } = req.body;
+    const batches = await Batch.find();
+    const branches = await Branch.find();
+    const branchobj = await Branch.findById(branch)
+      .populate("semesters")
+      .populate("divisions");
+    const subjectAssesmentObjs = await subjectAssignment
+      .find({ semester, branch })
+      .populate("subject");
+    const results = await Result.find({ semester, division, branch }).populate([
+      { path: "branch", select: "branchFullName branchKey" },
+      {
+        path: "student",
+        populate: [
+          {
+            path: "userId",
+            select: "Name Email MobileNo",
+          },
+        ],
+      },
+      { path: "division" },
+      { path: "semester" },
+    ]);
+    let subjectObj = null;
+    if (subject !== "default") {
+      subjectObj = await Subject?.findById(subject);
+    }
 
-    const results = await Result.find({ semester, division, branch });
+    let finalResults = results?.map((result) => {
+      let resultObj = result?._doc;
+      let resultSub = null;
+      if (
+        resultObj?.result &&
+        Object?.keys(resultObj?.result) &&
+        Object?.keys(resultObj?.result)?.length
+      ) {
+        resultSub = Object?.keys(resultObj?.result)?.filter(
+          (code) => code === subjectObj?.subjectCode
+        );
+      }
+
+      return {
+        ...resultObj,
+        ...{ subjectMarks: resultObj?.result[resultSub], ...subjectObj?._doc },
+      };
+    });
 
     return res.render("faculty/faculty", {
       pageTitle: "Result",
-      result: mergedResults,
-      subName: ["Sub" + subject + "_Name"],
-      subMarks: ["Sub" + subject + "_Marks"],
-      semester: semester,
-      division: division,
-      subject: subject,
-      batch: batch,
-      branch: branch,
+      results: finalResults,
+      semesters: branchobj?.semesters ?? [],
+      divisions: branchobj?.divisions ?? [],
+      subjects: subjectAssesmentObjs,
+      batches: batches.sort((b, a) => a.batchName - b.batchName),
+      branches: branches.sort((b, a) => a.branchFullName - b.branchFullName),
+      filters: {
+        semester: new ObjectId(semester),
+        division: new ObjectId(division),
+        subject: new ObjectId(subject),
+        batch: new ObjectId(batch),
+        branch: new ObjectId(branch),
+      },
     });
   } catch (err) {
     const error = new Error(err);
@@ -55,19 +114,6 @@ exports.getGradeHistory = (req, res, next) => {
     pageTitle: "Grade History",
     result: 0,
     student: {},
-  });
-};
-
-exports.getGradeHistorySearched = (req, res, next) => {
-  let errorMsg = req.flash("error");
-  if (errorMsg.length > 0) {
-    errorMsg = errorMsg[0];
-  } else {
-    errorMsg = null;
-  }
-  res.render("faculty/grade_history_searched", {
-    pageTitle: "Grade History",
-    errorMessage: errorMsg,
   });
 };
 
