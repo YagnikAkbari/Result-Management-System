@@ -7,6 +7,7 @@ const subjectAssignmentSchema = new Schema({
   semester: { type: Schema.Types.ObjectId, ref: "Semester", required: true },
   branch: { type: Schema.Types.ObjectId, ref: "Branch", required: true },
   is_elective: { type: Boolean, required: true },
+  electiveGroup: { type: Schema.Types.ObjectId, ref: "electiveGroup" },
 });
 
 module.exports = mongoose.model("SubjectAssignment", subjectAssignmentSchema);

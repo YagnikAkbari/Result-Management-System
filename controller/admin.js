@@ -1,21 +1,43 @@
 const path = require("path");
 const XLSX = require("xlsx");
-const {
-  convertToInsertManyMultipleObject,
-  compareExcelColumns,
-  convertToInsertManyObject,
-} = require("../config/helpers");
 const Login = require("../model/login");
 const Faculty = require("../model/faculty");
 const Student = require("../model/student");
-const fs = require("fs");
-const { ignoreColumns } = require("../config/constants");
 const Semester = require("../model/semester");
 const Branch = require("../model/branch");
 const Batch = require("../model/batch");
 const Division = require("../model/division");
 const SubjectAssignment = require("../model/subjectAssignment");
 const Result = require("../model/result");
+const StudentElective = require("../model/studentElective");
+
+const {
+  convertToInsertManyMultipleObject,
+  compareExcelColumns,
+  convertToInsertManyObject,
+} = require("../config/helpers");
+const { ignoreColumns } = require("../config/constants");
+
+const getStudentElectiveSubjects = async (student, semester) => {
+  let subArr = [];
+  const studentElective = await StudentElective.findOne({
+    studentId: student?._id,
+  }).populate({
+    path: "electives",
+    populate: {
+      path: "electiveSubjects",
+    },
+  });
+
+  subArr = studentElective?.electives?.filter((semesterElective) => {
+    return (
+      JSON.stringify(semesterElective?.semesterId) ===
+      JSON.stringify(semester?._id)
+    );
+  })[0]?.electiveSubjects;
+
+  return subArr?.map((sub) => sub?.subjectCode);
+};
 
 exports.getAdminPage = async (req, res, next) => {
   try {
@@ -212,13 +234,40 @@ exports.postResultData = async (req, res) => {
       (item) => item?.EnrollmentNo !== "-"
     );
 
+    const subjectElectiveMapping = subjects?.map((sub) => {
+      return {
+        subjectCode: sub?.subject?.subjectCode,
+        is_elective: sub?.is_elective,
+      };
+    });
     const finalData = await Promise.all(
       resultsData?.map(async (result) => {
         const studentObj = await Student?.findOne({
           EnrollmentNo: result?.EnrollmentNo,
         });
+        const electiveSubjects = await getStudentElectiveSubjects(
+          studentObj,
+          semesterObj
+        );
+        let resultSubjects = {};
+        Object?.keys(result)?.map((key) => {
+          let matchingElctiveSubject = subjectElectiveMapping?.filter(
+            (item) => key === item?.subjectCode && item?.is_elective
+          )[0];
+
+          if (
+            (matchingElctiveSubject?.is_elective &&
+              electiveSubjects?.includes(
+                matchingElctiveSubject?.subjectCode
+              )) ||
+            !matchingElctiveSubject
+          ) {
+            resultSubjects[key] = result[key];
+          }
+        });
+
         const data = {
-          ...result,
+          ...resultSubjects,
           semester: semesterObj?._id,
           branch: branchObj?._id,
           division: studentObj?.Div,
@@ -278,16 +327,14 @@ exports.createFaculty = async (req, res, next) => {
       Email,
       MobileNo,
     });
-    
-    
+
     await newUser.save();
     const newFaculty = await new Faculty({
       userId: newUser?._id,
       colloegeIdNo,
       collegeEmail,
     });
-    
-    
+
     await newFaculty.save();
   } catch (err) {
     console.log(err);

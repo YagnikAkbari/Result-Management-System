@@ -37,3 +37,7 @@ select {
 .faculty-table {
   margin: 7rem auto 2rem auto;
 }
+
+#download-list.list-of-remid-btn:disabled {
+  background-color: grey;
+}

@@ -77,7 +77,7 @@ exports.postFacultyResult = async (req, res, next) => {
     if (subject !== "default") {
       subjectObj = await Subject?.findById(subject);
     }
-
+    let remidStudentCount = 0;
     let finalResults = results?.map((result) => {
       let resultObj = result?._doc;
       let resultSub = null;
@@ -91,6 +91,10 @@ exports.postFacultyResult = async (req, res, next) => {
         );
       }
 
+      if (resultObj?.result[resultSub] < 28) {
+        remidStudentCount++;
+      }
+
       return {
         ...resultObj,
         ...{ subjectMarks: resultObj?.result[resultSub], ...subjectObj?._doc },
@@ -98,7 +102,9 @@ exports.postFacultyResult = async (req, res, next) => {
     });
 
     if (is_download) {
-      let convertedData = convertFlatArrFromObjs(finalResults);
+      let convertedData = convertFlatArrFromObjs(
+        finalResults?.filter((result) => result?.subjectMarks < 28)
+      );
       let removeKeys = [
         "_id",
         "student_id",
@@ -113,6 +119,8 @@ exports.postFacultyResult = async (req, res, next) => {
         "studentBatch",
         "studentBranch",
         "studentDiv",
+        "studentcurrentSemester",
+        "subjectName",
         ...generateResultRemoveKeys(convertedData[0]),
       ];
 
@@ -124,12 +132,13 @@ exports.postFacultyResult = async (req, res, next) => {
     } else {
       return res.render("faculty/faculty", {
         pageTitle: "Result",
-        results: finalResults,
+        results: finalResults?.filter((result) => result?.subjectMarks),
         semesters: branchobj?.semesters ?? [],
         divisions: branchobj?.divisions ?? [],
         subjects: subjectAssesmentObjs,
         batches: batches.sort((b, a) => a.batchName - b.batchName),
         branches: branches.sort((b, a) => a.branchFullName - b.branchFullName),
+        remidStudentCount,
         filters: {
           semester: new ObjectId(semester),
           division: new ObjectId(division),
