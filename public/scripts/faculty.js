@@ -99,7 +99,29 @@ function exportFailedResultsToExcel() {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("datatatetsr", data);
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(data);
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+      const excelBlob = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+
+      const blob = new Blob([excelBlob], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = 'remid.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      window.URL.revokeObjectURL(url);
     })
     .catch((error) => {
       console.error("Error fetching data:", error);

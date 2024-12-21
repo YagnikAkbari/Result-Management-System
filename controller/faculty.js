@@ -6,14 +6,19 @@ const Branch = require("../model/branch");
 const Subject = require("../model/subject");
 const subjectAssignment = require("../model/subjectAssignment");
 const mongoose = require("mongoose");
-const fs = require("fs");
 const { ObjectId } = mongoose.Types;
 
 const {
   getPopulatedSubjectData,
   convertArrToExcelData,
   convertFlatArrFromObjs,
+  removeExtraKeys,
+  sortArrObjKeyWise,
 } = require("../config/helpers");
+
+const generateResultRemoveKeys = (data) => {
+  return Object?.keys(data)?.filter((key) => key.startsWith("result"));
+};
 
 exports.getFacultyPage = async (req, res, next) => {
   try {
@@ -93,28 +98,28 @@ exports.postFacultyResult = async (req, res, next) => {
     });
 
     if (is_download) {
-      console.log(
-        "convertArrToExcelData",
-        convertFlatArrFromObjs(finalResults)
-      );
-      // console.log("convertArrToExcelData", convertArrToExcelData(finalResults));
+      let convertedData = convertFlatArrFromObjs(finalResults);
+      let removeKeys = [
+        "_id",
+        "student_id",
+        "userId_id",
+        "division_id",
+        "divisiondivisionKey",
+        "branch_id",
+        "branchbranchKey",
+        "semester_id",
+        "semestersemesterKey",
+        "subjectKey",
+        "studentBatch",
+        "studentBranch",
+        "studentDiv",
+        ...generateResultRemoveKeys(convertedData[0]),
+      ];
 
-      // const workbook = XLSX.utils.book_new(convertArrToExcelData(finalResults));
-      // const worksheet = XLSX.utils.aoa_to_sheet();
-      // XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      convertedData = removeExtraKeys(convertedData, removeKeys);
 
-      // const tempFilePath = path.join(__dirname, "temp.xlsx");
-      // XLSX.writeFile(workbook, tempFilePath);
-      // res.download(tempFilePath, "data.xlsx", (err) => {
-      //   if (err) {
-      //     console.error("Error sending file:", err);
-      //     res.status(500).send("Error downloading file");
-      //   }
+      finalResults = convertArrToExcelData(sortArrObjKeyWise(convertedData));
 
-      //   fs.unlink(tempFilePath, (unlinkErr) => {
-      //     if (unlinkErr) console.error("Error deleting temp file:", unlinkErr);
-      //   });
-      // });
       return res.status(200).send(finalResults);
     } else {
       return res.render("faculty/faculty", {

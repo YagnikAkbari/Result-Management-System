@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Subject = require("../model/subject");
 
 const compareColumns = (xlData, ResultModel) => {
@@ -84,48 +85,60 @@ const getPopulatedSubjectData = async (subCodes) => {
 const convertArrToExcelData = (data) => {
   let headers = Object?.keys(data[0]);
   let body = data?.map((item) => {
-    return Object?.values(item)
-      ?.map((value) => {
-        if (typeof value === "string") {
-          return value;
-        } else if (typeof value === "object") {
-          return Object?.values?.(value);
-        } else {
-          return null;
-        }
-      })
-      ?.flatMap((item) => item);
+    return Object?.values(item);
   });
-  return [headers, body];
+  return [headers, ...body];
 };
 
-const convertToFlatObj = (dataObj) => {
+const convertToFlatObj = (dataObj, parentKey = "") => {
+  let obj = {};
   Object?.keys(dataObj)?.map((key) => {
-    if (
-      dataObj[key] &&
-      typeof dataObj[key] === "object" &&
-      !Array?.isArray(dataObj[key])
-    ) {
-      convertToFlatObj(dataObj[key]);
-    } else {
-      return { ...dataObj[key] };
+    if (!dataObj[key]) {
+      return dataObj[key];
     }
+    const checkObj = JSON.parse(JSON.stringify(dataObj[key]));
+
+    if (
+      checkObj &&
+      typeof checkObj === "object" &&
+      !Array.isArray(checkObj) &&
+      !["_id", "__v"]?.includes(key)
+    ) {
+      const flattenedNestedObj = convertToFlatObj(checkObj, key);
+      obj = { ...obj, ...flattenedNestedObj };
+    } else {
+      obj[`${parentKey}${key}`] = dataObj[key];
+    }
+  });
+  return obj;
+};
+
+const removeExtraKeys = (data, removeKeys) => {
+  return data?.map((item) => {
+    let obj = {};
+    if (item && Object?.keys(item) && Object?.keys(item)?.length) {
+      Object?.keys(item)?.map((key) => {
+        if (!removeKeys?.includes(key)) {
+          obj[key] = item[key];
+        }
+      });
+    }
+    return obj;
   });
 };
 
 const convertFlatArrFromObjs = (data) => {
+  return data?.map((item) => convertToFlatObj(item));
+};
+
+const sortArrObjKeyWise = (data) => {
   return data?.map((item) => {
-    let data = {};
-    if (item && Object?.keys(item) && Object?.keys(item)?.length) {
-      Object?.keys(item)?.map((key) => {
-        if (typeof item[key] === "object" && !Array?.isArray(item[key])) {
-          data = convertToFlatObj(item[key]);
-        } else {
-          data = { ...data, [key]: item[key] };
-        }
-      });
-    }
-    return data;
+    return Object.keys(item)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = item[key];
+        return acc;
+      }, {});
   });
 };
 
@@ -137,4 +150,6 @@ module.exports = {
   getPopulatedSubjectData,
   convertArrToExcelData,
   convertFlatArrFromObjs,
+  removeExtraKeys,
+  sortArrObjKeyWise,
 };
