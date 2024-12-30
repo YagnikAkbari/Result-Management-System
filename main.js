@@ -1,7 +1,7 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({path: '.env.local'});
 const cors = require("cors");
 const flash = require("connect-flash");
 const path = require("path");

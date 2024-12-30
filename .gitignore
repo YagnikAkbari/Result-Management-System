@@ -1,5 +1,8 @@
 package-lock.json
 .env
+.env.*
 /node_modules
 /secret
 hiddenTask.txt
+results/
+public/uploads

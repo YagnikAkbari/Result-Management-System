@@ -15,6 +15,7 @@ const {
   convertToInsertManyMultipleObject,
   compareExcelColumns,
   convertToInsertManyObject,
+  convertToDate,
 } = require("../config/helpers");
 const { ignoreColumns } = require("../config/constants");
 
@@ -339,4 +340,48 @@ exports.createFaculty = async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
+};
+
+exports.convertTimestampToDate = (req, res) => {
+  const validExtensions = [".xls", ".xlsx", ".csv"];
+  const fileExtension = path.extname(req.file.originalname);
+  if (!validExtensions.includes(fileExtension)) {
+    req.flash("error", "❌ Invalid file format. Only Excel files are allowed.");
+    return res.redirect("/admin");
+  }
+
+  const processTimestamp = (timestamp) => {
+    return timestamp && typeof timestamp === "number"
+      ? convertToDate(timestamp)
+      : "Wrong Time Stamp";
+  };
+
+  const workbook = XLSX.readFile(req.file.path);
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  const xlData = XLSX.utils.sheet_to_json(sheet);
+  const data = xlData?.map((json) => {
+    return {
+      ...json,
+      Time: processTimestamp(json["Time"]),
+      "API Timestamp": processTimestamp(json["API Timestamp"]),
+      "Time Processed (UTC)": processTimestamp(json["Time Processed (UTC)"]),
+    };
+  });
+
+  const dworkbook = XLSX.utils.book_new();
+  const dworksheet = XLSX.utils.json_to_sheet(data);
+
+  XLSX.utils.book_append_sheet(dworkbook, dworksheet, "Sheet1");
+  const savePath = path.join(
+    __dirname,
+    "..",
+    "results",
+    `${req.file.originalname.split(".")[0]}-converted.xlsx`
+  );
+  XLSX.writeFile(dworkbook, savePath);
+
+  res.status(200).json({
+    message: "Success Access it.",
+  });
 };
