@@ -29,6 +29,8 @@ router.post(
   adminController.postStudentData
 );
 
+router.post("/convert-datea-format", upload.single('timedate'), adminController.convertTimestampToDate)
+
 router.post(
   "/admin",
   auth,
