@@ -3,3 +3,7 @@ package-lock.json
 /node_modules
 /secret
 hiddenTask.txt
+public/uploads
+.env.local
+.env.*
+results/
