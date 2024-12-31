@@ -3,7 +3,14 @@ const Student = require("../model/student");
 const Branch = require("../model/branch");
 const Result = require("../model/result");
 const Semester = require("../model/semester");
-const { getPopulatedSubjectData } = require("../config/helpers");
+const XLSX = require("xlsx");
+const fs = require("fs");
+const path = require("path");
+const {
+  getPopulatedSubjectData,
+  convertArrToExcelData,
+  removeExtraKeys,
+} = require("../config/helpers");
 
 exports.getStudentPage = async (req, res) => {
   try {
@@ -88,9 +95,10 @@ exports.getProfile = async (req, res, next) => {
 exports.getResult = async (req, res, next) => {
   try {
     const { username: enrollmentNo } = req.session.login;
+    const { semester, is_download } = req.query;
 
     const semesterObj = await Semester.findOne({
-      semesterKey: req.query.semester,
+      semesterKey: semester,
     });
     const studentObj = await Student.findOne({
       EnrollmentNo: enrollmentNo,
@@ -120,11 +128,41 @@ exports.getResult = async (req, res, next) => {
     }
 
     result.result = resultData;
-    
-    return res.render("student/result", {
-      pageTitle: `${req.query.semester} Result`,
-      result,
-    });
+    if (is_download) {
+      const data = await convertArrToExcelData(
+        removeExtraKeys(resultData, ["_id", "subjectKey", "subjectName", "__v"])
+      )?.map((item, idx) =>
+        idx === 0
+          ? [...item, "Status"]
+          : [...item, item[2] < 28 ? "Fail" : "Pass"]
+      );
+
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(data);
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+      const excelBuffer = XLSX.write(workbook, {
+        type: "buffer",
+        bookType: "xlsx",
+      });
+      const downloadFilePath = path.join(
+        __dirname,
+        "..",
+        "public",
+        "results",
+        "TimeStampFormat.xlsx"
+      );
+      fs.writeFileSync(`${downloadFilePath}`, excelBuffer);
+      res.download(downloadFilePath);
+      setTimeout(() => fs.unlinkSync(downloadFilePath), 3000);
+      return;
+    } else {
+      return res.render("student/result", {
+        pageTitle: `${semester} Result`,
+        result,
+      });
+    }
   } catch (err) {
     const error = new Error(err);
     error.httpStatusCode = 500;

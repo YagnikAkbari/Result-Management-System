@@ -97,26 +97,12 @@ function exportFailedResultsToExcel() {
       batch,
     }),
   })
-    .then((response) => response.json())
-    .then((data) => {
-      const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.json_to_sheet(data);
-
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-      const excelBlob = XLSX.write(workbook, {
-        bookType: "xlsx",
-        type: "array",
-      });
-
-      const blob = new Blob([excelBlob], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
+    .then((response) => response.blob())
+    .then((blob) => {
       const url = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = 'remid.xlsx';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -126,4 +112,23 @@ function exportFailedResultsToExcel() {
     .catch((error) => {
       console.error("Error fetching data:", error);
     });
+}
+
+function downloadResult() {
+  fetch(`/result?${window.location.href.split("?")[1]}&is_download=true`)
+    .then((response) => {
+      if (!response.ok) throw new Error("File not found");
+      console.log("responseresponse", response);
+      return response.blob();
+    })
+    .then((blob) => {
+      console.log("responseresponse blobblobblob", blob);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "";
+      a.click();
+      URL.revokeObjectURL(url);
+    })
+    .catch((error) => console.error("Download error:", error));
 }

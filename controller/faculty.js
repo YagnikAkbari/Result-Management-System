@@ -6,6 +6,9 @@ const Branch = require("../model/branch");
 const Subject = require("../model/subject");
 const subjectAssignment = require("../model/subjectAssignment");
 const mongoose = require("mongoose");
+const XLSX = require("xlsx");
+const fs = require("fs");
+const path = require("path");
 const { ObjectId } = mongoose.Types;
 
 const {
@@ -144,7 +147,27 @@ exports.postFacultyResult = async (req, res, next) => {
 
       finalResults = convertArrToExcelData(sortArrObjKeyWise(convertedData));
 
-      return res.status(200).send(finalResults);
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(finalResults);
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+      const excelBuffer = XLSX.write(workbook, {
+        type: "buffer",
+        bookType: "xlsx",
+      });
+      const resultPath = path.join(
+        __dirname,
+        "..",
+        "public",
+        "results",
+        "Temp.xlsx"
+      );
+
+      fs.writeFileSync(`${resultPath}`, excelBuffer);
+      res.download(resultPath);
+      setTimeout(() => fs.unlinkSync(resultPath), 3000);
+      return;
     } else {
       return res.render("faculty/faculty", {
         pageTitle: "Result",

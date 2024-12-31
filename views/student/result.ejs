@@ -45,8 +45,9 @@
       </div>
     </nav>
 
-    <div class="selection--search">            
+    <div class="selection--search">
       <a href="/student" class="btn-back">Back</a>
+      <button onclick="downloadResult()">Download Result</button>
     </div>
 
     <script
@@ -71,9 +72,9 @@
           <td><%= result.subjectCode %></td>
           <td><%= result.subjectFullName %></td>
           <td><%= result.subjectMarks %></td>
-          <% if (result.subjectMarks >= 12) { %>
+          <% if (result.subjectMarks >= 29) { %>
           <td><img src="images/pass.svg" alt="pass" class="pass" /></td>
-          <% } else if (result.subjectMarks < 12) { %>
+          <% } else if (result.subjectMarks < 28) { %>
           <td><img src="images/remid.svg" alt="remid" class="remid" /></td>
           <% } else { %>
           <td><img src="images/absent.svg" alt="absent" class="absent" /></td>
@@ -97,5 +98,6 @@
 
       semesterDropdown.addEventListener("change", handleDropdownChange);
     </script>
+    <script src="/scripts/faculty.js"></script>
   </body>
 </html>
