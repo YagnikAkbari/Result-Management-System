@@ -156,6 +156,11 @@ exports.postFacultyResult = async (req, res, next) => {
         type: "buffer",
         bookType: "xlsx",
       });
+      const directoryPath = path.join(__dirname, "..", "public/results");
+      if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath, { recursive: true });
+        console.log(`Directory created at: ${directoryPath}`);
+      }
       const resultPath = path.join(
         __dirname,
         "..",
@@ -163,11 +168,6 @@ exports.postFacultyResult = async (req, res, next) => {
         "results",
         "Temp.xlsx"
       );
-      const directoryPath = path.join(__dirname, "../public/results");
-      if (!fs.existsSync(directoryPath)) {
-        fs.mkdirSync(directoryPath, { recursive: true });
-        console.log(`Directory created at: ${directoryPath}`);
-      }
       fs.writeFileSync(`${resultPath}`, excelBuffer);
       res.download(resultPath);
       setTimeout(() => fs.unlinkSync(resultPath), 3000);
