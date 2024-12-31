@@ -41,3 +41,15 @@ select {
 #download-list.list-of-remid-btn:disabled {
   background-color: grey;
 }
+
+.result-filters {
+  padding: 2rem;
+  position: relative;
+}
+
+.error-results-filter {
+  position: absolute;
+  top: 6rem;
+  left: 2rem;
+  width: fit-content;
+}

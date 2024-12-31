@@ -42,6 +42,7 @@ exports.getFacultyPage = async (req, res, next) => {
         batch: "default",
         branch: "default",
       },
+      errorMessage: "",
     });
   } catch (err) {
     const error = new Error(err);
@@ -54,11 +55,42 @@ exports.postFacultyResult = async (req, res, next) => {
   try {
     const { semester, division, subject, batch, branch } = req.body;
     const { is_download } = req.query;
+
     const batches = await Batch.find();
     const branches = await Branch.find();
-    const branchobj = await Branch.findById(branch)
-      .populate("semesters")
-      .populate("divisions");
+
+    const branchobj =
+      branch !== "default"
+        ? await Branch.findById(branch)
+            .populate("semesters")
+            .populate("divisions")
+        : null;
+
+    if (
+      semester === "default" ||
+      division === "default" ||
+      batch === "default" ||
+      branch === "default"
+    ) {
+      res.render("faculty/faculty", {
+        pageTitle: "Result",
+        results: 0,
+        semesters: branchobj?.semesters ?? [],
+        divisions: branchobj?.divisions ?? [],
+        subjects: [],
+        batches: batches.sort((b, a) => a.batchName - b.batchName),
+        branches: branches.sort((b, a) => a.branchFullName - b.branchFullName),
+        filters: {
+          semester: semester,
+          division: division,
+          subject: "default",
+          batch: batch,
+          branch: branch,
+        },
+        errorMessage: "Batch, Branch, Semester, Division are required.",
+      });
+    }
+
     const subjectAssesmentObjs = await subjectAssignment
       .find({ semester, branch })
       .populate("subject");

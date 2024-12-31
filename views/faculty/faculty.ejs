@@ -63,7 +63,7 @@
         </div>
       </div>
     </nav>
-    <div class="selection--search">
+    <div class="result-filters">
       <form id="myForm" action="/result" method="post">
         <select
           id="batch"
@@ -125,12 +125,14 @@
           type="submit"
           name="btnSearch"
           value="Search"
-          class="btn-search"
+          class="btn-search mt-0"
           id="btn-search"
         />
       </form>
-    </div>
-
+      <% if (errorMessage) { %>
+        <p class="personal user-message error-stmt error-results-filter"><%= errorMessage %></p>
+      <% } %>
+    </div>    
     <% if (results.length > 0) { %>
       <table class="table faculty-table" style="display: block;">
         <thead class="thead-dark">
