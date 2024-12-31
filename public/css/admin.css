@@ -169,3 +169,9 @@ select {
   color: var(--primary-color);
   height: 100%;
 }
+
+.download-result-updalod {
+  height: auto;
+  display: inline;
+  padding: 0;
+}

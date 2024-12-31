@@ -122,7 +122,25 @@ function downloadResult() {
       return response.blob();
     })
     .then((blob) => {
-      console.log("responseresponse blobblobblob", blob);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "";
+      a.click();
+      URL.revokeObjectURL(url);
+    })
+    .catch((error) => console.error("Download error:", error));
+}
+
+function downloadResultFormat() {
+  const semester = document.getElementById("semester").value;
+  const branch = document.getElementById("branch").value;
+  fetch(`/result-download-format?semester=${semester}&branch=${branch}`)
+    .then((response) => {
+      if (!response.ok) throw new Error("File not found");
+      return response.blob();
+    })
+    .then((blob) => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

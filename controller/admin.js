@@ -1,5 +1,6 @@
 const path = require("path");
 const XLSX = require("xlsx");
+const fs = require("fs");
 const Login = require("../model/login");
 const Faculty = require("../model/faculty");
 const Student = require("../model/student");
@@ -17,6 +18,7 @@ const {
   convertToInsertManyObject,
 } = require("../config/helpers");
 const { ignoreColumns } = require("../config/constants");
+const subjectAssignment = require("../model/subjectAssignment");
 
 const getStudentElectiveSubjects = async (student, semester) => {
   let subArr = [];
@@ -186,8 +188,8 @@ exports.postResultData = async (req, res) => {
     const validExtensions = [".xls", ".xlsx"];
     const fileExtension = path.extname(req.file.originalname);
     const [semesterObj, branchObj] = await Promise.all([
-      await Semester.findOne({ semesterKey: sem }),
-      await Branch.findOne({ branchKey: branch }),
+      await Semester.findById(sem),
+      await Branch.findById(branch),
     ]);
 
     const subjects = await SubjectAssignment.find({
@@ -336,6 +338,47 @@ exports.createFaculty = async (req, res, next) => {
     });
 
     await newFaculty.save();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.getResultDownloadFormat = async (req, res) => {
+  try {
+    const { semester, branch } = req.query;
+
+    const subjectAssesmentObjs = await subjectAssignment
+      .find({ semester, branch })
+      .populate("subject");
+
+    const subjectCodes = subjectAssesmentObjs?.map(
+      (subject) => subject?.subject?.subjectCode
+    );
+    const data = [["EnrollmentNo", "AcademicYear", ...subjectCodes]];
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+    const excelBuffer = XLSX.write(workbook, {
+      type: "buffer",
+      bookType: "xlsx",
+    });
+    const directoryPath = path.join(__dirname, "..", "public/results");
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+    const resultPath = path.join(
+      __dirname,
+      "..",
+      "public",
+      "results",
+      "ResultFormatTemp.xlsx"
+    );
+    fs.writeFileSync(`${resultPath}`, excelBuffer);
+    res.download(resultPath);
+    setTimeout(() => fs.unlinkSync(resultPath), 3000);
+    return;
   } catch (err) {
     console.log(err);
   }

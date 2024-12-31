@@ -61,15 +61,13 @@
             <div class="select--branch--sem">
               <select id="semester" name="Semester">
                 <% details?.semesters?.forEach(sem => { %>
-                <option value="<%= sem?.semesterKey %>">
-                  <%= sem?.Name %>
-                </option>
+                <option value="<%= sem?._id %>"><%= sem?.Name %></option>
                 <% }); %>
               </select>
               <select id="branch" name="Branch">
-                <% details?.branches?.forEach(sem => { %>
-                <option value="<%= sem?.branchKey %>">
-                  <%= sem?.branchFullName %>
+                <% details?.branches?.forEach(branch => { %>
+                <option value="<%= branch?._id %>">
+                  <%= branch?.branchFullName %>
                 </option>
                 <% }); %>
               </select>
@@ -93,6 +91,14 @@
             alt="Question mark" /></span
         ><span class="upper bold"> note:</span> Make sure that your file is in
         <span class="bold correct-format-link">correct format.</span>
+        <span
+          ><button
+            class="download-result-updalod"
+            onclick="downloadResultFormat()"
+          >
+            <i class="fa-regular fa-circle-down bold download-icon">
+            </i></button
+        ></span>
         <div class="correct-format-image">
           <img src="/images/correct_result_format.png" alt="" />
         </div>
@@ -166,5 +172,6 @@
       semesterDropdown.addEventListener("change", handleDropdownChange);
       branchDropdown.addEventListener("change", handleDropdownChange);
     </script>
+    <script src="/scripts/faculty.js"></script>
   </body>
 </html>
