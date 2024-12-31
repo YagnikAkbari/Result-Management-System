@@ -153,6 +153,11 @@ exports.getResult = async (req, res, next) => {
         "results",
         "TimeStampFormat.xlsx"
       );
+      const directoryPath = path.join(__dirname, "../public/results");
+      if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath, { recursive: true });
+        console.log(`Directory created at: ${directoryPath}`);
+      }
       fs.writeFileSync(`${downloadFilePath}`, excelBuffer);
       res.download(downloadFilePath);
       setTimeout(() => fs.unlinkSync(downloadFilePath), 3000);
