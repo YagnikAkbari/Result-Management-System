@@ -77,29 +77,45 @@ exports.postFacultyResult = async (req, res, next) => {
     if (subject !== "default") {
       subjectObj = await Subject?.findById(subject);
     }
+
     let remidStudentCount = 0;
-    let finalResults = results?.map((result) => {
-      let resultObj = result?._doc;
-      let resultSub = null;
-      if (
-        resultObj?.result &&
-        Object?.keys(resultObj?.result) &&
-        Object?.keys(resultObj?.result)?.length
-      ) {
-        resultSub = Object?.keys(resultObj?.result)?.filter(
-          (code) => code === subjectObj?.subjectCode
-        );
-      }
+    let finalResults = results
+      ?.map((result) => {
+        let resultObj = result?._doc;
+        let resultSub = null;
+        if (Object?.keys(resultObj?.result ?? {})?.length) {
+          if (subjectObj) {
+            resultSub = Object?.keys(resultObj?.result)?.filter(
+              (code) => code === subjectObj?.subjectCode
+            );
+            if (resultObj?.result[resultSub] < 28) {
+              remidStudentCount++;
+            }
 
-      if (resultObj?.result[resultSub] < 28) {
-        remidStudentCount++;
-      }
-
-      return {
-        ...resultObj,
-        ...{ subjectMarks: resultObj?.result[resultSub], ...subjectObj?._doc },
-      };
-    });
+            return {
+              ...resultObj,
+              ...{
+                subjectMarks: resultObj?.result[resultSub],
+                ...subjectObj?._doc,
+              },
+            };
+          } else {
+            return Object?.keys(resultObj?.result)?.map((subCode) => {
+              if (resultObj?.result[subCode] < 28) {
+                remidStudentCount++;
+              }
+              return {
+                ...resultObj,
+                subjectMarks: resultObj?.result[subCode],
+                ...subjectAssesmentObjs?.find(
+                  (subject) => subject?.subject?.subjectCode === subCode
+                )?.subject?._doc,
+              };
+            });
+          }
+        }
+      })
+      .flat();
 
     if (is_download) {
       let convertedData = convertFlatArrFromObjs(
@@ -142,7 +158,7 @@ exports.postFacultyResult = async (req, res, next) => {
         filters: {
           semester: new ObjectId(semester),
           division: new ObjectId(division),
-          subject: new ObjectId(subject),
+          subject: subjectObj ? new ObjectId(subject) : "default",
           batch: new ObjectId(batch),
           branch: new ObjectId(branch),
         },
