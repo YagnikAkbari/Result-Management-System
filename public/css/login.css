@@ -19,15 +19,11 @@ body {
   display: flex;
 }
 
-.main-login {
-  background-color: var(--primary-color);
-}
-
 /* inputs styling */
 .inputs {
   border-radius: 16px;
   background-color: var(--color-white);
-  height: 34.63rem;
+  height: 34rem;
   display: flex;
   width: 30rem;
   padding: 0 var(--padding-md) var(--padding-md);

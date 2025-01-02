@@ -1,8 +1,17 @@
+@use "./fonts";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  position: relative;
 }
+
+* {
+  box-sizing: border-box;
+}
+
 body {
+  font-family: "Inter", sans-serif;
 }

@@ -1,1 +1,22 @@
-@import "./globals.scss";
+@use "./variables";
+
+@use "./globals.scss";
+
+// pages
+
+.user-message {
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin: auto;
+  font-size: 1rem;
+  width: 100%;
+
+  &.error {
+    background-color: #f5b7ac;
+    color: #731c0d;
+  }
+  &.success {
+    background-color: #b2f5ac;
+    color: #127909;
+  }
+}
