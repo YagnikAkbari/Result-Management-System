@@ -14,4 +14,66 @@
 
 body {
   font-family: "Inter", sans-serif;
+  margin: 0 auto;
+}
+
+select {
+  border: 1px solid #e5e5e5;
+  border-radius: 0.5rem;
+  background: url("/icons/down_arrow_blank.svg") no-repeat;
+  background-color: #fff;
+  background-size: 1.5rem;
+  padding: 0.75rem 1.35rem 0.75rem 0.75rem;
+  background-position: 100%;
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  &:hover {
+    background-color: #fafafa;
+  }
+  text-transform: uppercase;
+  &:focus-within {
+    outline-color: #2f61ad;
+  }
+}
+
+input {
+  border: 1.5px solid #dbdbdb;
+  font-weight: 500;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  padding: 0.75rem;
+  color: #7f7f7f;
+  caret-color: black;
+  &:active,
+  &:hover {
+    border: 1.5px solid #7f7f7f;
+  }
+  &:valid {
+    color: #7f7f7f;
+    border-color: #7f7f7f;
+  }
+  &:focus {
+    outline-color: #2f61ad;
+  }
+}
+
+.user-message {
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin: auto;
+  font-size: 1rem;
+  width: 100%;
+
+  &.error {
+    background-color: #f5b7ac;
+    color: #731c0d;
+  }
+  &.success {
+    background-color: #b2f5ac;
+    color: #127909;
+  }
 }

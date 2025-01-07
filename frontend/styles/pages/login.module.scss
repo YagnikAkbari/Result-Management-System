@@ -1,64 +1,44 @@
 .main {
   background-color: #2f61ad;
-  .container {
-    border-radius: 1rem;
-    background-color: #fff;
-    display: flex;
-    width: 30rem;
+  .wrapper {
     padding: 0 1.5rem;
-    gap: 1.81rem;
-    margin: auto;
-    height: 34rem;
-    background-color: #ffffff;
-    .form-container {
-      gap: 2rem;
-      width: 100%;
-      .input {
-        border: 1.5px solid #dbdbdb;
-        font-weight: 500;
-        font-size: 1rem;
-        border-radius: 0.5rem;
-        background-color: transparent;
-        padding: 0.75rem;
-        color: #7f7f7f;
-        caret-color: black;
-        &:active,
-        &:hover {
-          border: 1.5px solid #7f7f7f;
+    border-radius: 1rem;
+    width: 30rem;
+    background-color: #fff;
+    .container {
+      display: flex;
+      gap: 1.81rem;
+      margin: auto;
+      height: 34rem;
+      .form-container {
+        gap: 2rem;
+        width: 100%;
+        .button {
+          border: 1.5px solid #2f61ad;
+          border-radius: 0.5rem;
+          font-size: 1.125rem;
+          background-color: #2f61ad;
+          padding: 0.75rem;
+          color: #fff;
+          font-weight: 700;
         }
-        &:valid {
+        .reset {
           color: #7f7f7f;
-          border-color: #7f7f7f;
-        }
-        &:focus {
-          outline-color: #2f61ad;
+          margin: auto;
+          span {
+            color: #2f61ad;
+          }
         }
       }
-      .button {
-        border: 1.5px solid #2f61ad;
-        border-radius: 0.5rem;
-        font-size: 1.125rem;
-        background-color: #2f61ad;
-        padding: 0.75rem;
-        color: #fff;
+      .login {
+        font-size: 2rem;
+        color: #273535;
+        text-align: left;
         font-weight: 700;
       }
-      .reset {
-        color: #7f7f7f;
-        margin: auto;
-        span {
-          color: #2f61ad;
-        }
+      .login-label {
+        padding: 0.75rem 0.5rem;
       }
-    }
-    .login {
-      font-size: 2rem;
-      color: #273535;
-      text-align: left;
-      font-weight: 700;
-    }
-    .login-label {
-      padding: 0.75rem 0.5rem;
     }
   }
 }

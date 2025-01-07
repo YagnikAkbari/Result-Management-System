@@ -1,16 +1,18 @@
 import React from "react";
 import Navbar from "../Navbar/Navbar";
+type roleTypes = "student" | "faculty" | "admin";
 
 const NavbarLayout = ({
   children,
-}: Readonly<{ children: React.ReactNode }>) => {
+  role = "student",
+}: Readonly<{ children: React.ReactNode; role: roleTypes }>) => {
   return (
-    <>
+    <div className="body-container">
       <nav>
-        <Navbar />
+        <Navbar role={role} />
       </nav>
       {children}
-    </>
+    </div>
   );
 };
 

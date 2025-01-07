@@ -1,37 +1,20 @@
-import NavbarLayout from "@/components/shared/layouts/NavbarLayout";
-import LoginLayout from "@/components/shared/layouts/LoginLayout";
+import React from "react";
 import "../styles/main.scss";
+import Provider from "./Provider";
 
-export default function RootLayout({
-  children,
-  layoutType,
-}: Readonly<{
-  children: React.ReactNode;
-  layoutType: string;
-}>) {
-  console.log("layoutType", layoutType);
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+  return (
+    <html lang="en">
+      <body className={"antialiased bg-primary"}>
+        <Provider>{children}</Provider>
+        <script
+          src="https://kit.fontawesome.com/d19926abb5.js"
+          crossOrigin="anonymous"
+          async
+        ></script>
+      </body>
+    </html>
+  );
+};
 
-  if (layoutType === "login") {
-    return (
-      <html lang="en">
-        <body className={"antialiased bg-primary"}>
-          <LoginLayout>{children}</LoginLayout>
-        </body>
-      </html>
-    );
-  } else if (layoutType === "dashboard") {
-    return (
-      <html lang="en">
-        <body className={"antialiased bg-primary"}>{children}</body>
-      </html>
-    );
-  } else {
-    return (
-      <html lang="en">
-        <body className={"antialiased bg-primary"}>
-          <NavbarLayout>{children}</NavbarLayout>
-        </body>
-      </html>
-    );
-  }
-}
+export default RootLayout;
