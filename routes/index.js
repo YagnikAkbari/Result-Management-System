@@ -11,6 +11,7 @@ const subjectRoutes = require("../routes/subject");
 const resultRoutes = require("../routes/result");
 const electiveGroupRoutes = require("../routes/electiveGroup");
 const studentElectiveRoutes = require("../routes/studentElective");
+const ecommRoutes = require("../routes/ecomm");
 
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.use(subjectRoutes);
 router.use(resultRoutes);
 router.use(electiveGroupRoutes);
 router.use(studentElectiveRoutes);
+router.use(ecommRoutes);
 
 module.exports = router;
