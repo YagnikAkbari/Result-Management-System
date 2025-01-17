@@ -3,6 +3,8 @@ const navlayout = [
     className: "flex justify-between items-center",
     styles: {
       width: "100vw",
+      display: "flex",
+      alignItems: "center",
       justifyContent: "space-between",
       padding: "0 23px",
     },
@@ -13,12 +15,14 @@ const navlayout = [
         fieldType: "image",
         alt: "product",
         src: "/images/logo.svg",
-        height: "44",
-        width: "171.45",
+        height: "34px",
+        width: "120px",
       },
       {
         className: "flex items-center",
         styles: {
+          display: "flex",
+          alignItems: "center",
           justifyContent: "flex-start",
           gap: "23px",
         },
@@ -77,7 +81,7 @@ const navlayout = [
   },
 ];
 
-webfooterLayout = [
+const webfooterLayout = [
   {
     className: "flex flex-col items-center",
     id: "footer",
@@ -87,58 +91,66 @@ webfooterLayout = [
     child: [
       {
         className: "flex flex-col",
+        child: [
+          {
+            className: "",
+            fieldType: "image",
+            alt: "Dettol",
+            height: "20px",
+            width: "20px",
+            src: "/images/dettol.svg",
+          },
+          {
+            fieldType: "label",
+            labelType: "span",
+            label: "Dellot",
+            className: "",
+          },
+        ],
+      },
+      {
+        className: "flex flex-col",
+        styles: {
+          justifyContent: "center",
+        },
+        child: [
+          {
+            className: "",
+            fieldType: "image",
+            alt: "Dettol",
+            height: "20px",
+            width: "20px",
+            src: "/images/dettol.svg",
+          },
+          {
+            fieldType: "label",
+            labelType: "span",
+            label: "Dellot",
+            height: "20px",
+            width: "20px",
+            className: "",
+          },
+        ],
+      },
+      {
+        className: "flex flex-col",
+        styles: {
+          justifyContent: "center",
+        },
+        child: [
+          {
+            className: "",
+            fieldType: "image",
+            alt: "Dettol",
+            height: "20px",
+            width: "20px",
+            src: "/images/dettol.svg",
+          },
+          {
+            fieldType: "label",
+            labelType: "span",
+            label: "Dellot",
 
-        child: [
-          {
-            className: "",
-            fieldType: "image",
-            alt: "Dettol",
-            src: "/images/dettol.svg",
-          },
-          {
-            fieldType: "label",
-            labelType: "span",
-            label: "Dellot",
-            className: "",
-          },
-        ],
-      },
-      {
-        className: "flex flex-col",
-        styles: {
-          justifyContent: "center",
-        },
-        child: [
-          {
-            className: "",
-            fieldType: "image",
-            alt: "Dettol",
-            src: "/images/dettol.svg",
-          },
-          {
-            fieldType: "label",
-            labelType: "span",
-            label: "Dellot",
-            className: "",
-          },
-        ],
-      },
-      {
-        className: "flex flex-col",
-        styles: {
-          justifyContent: "center",
-        },
-        child: [
-          {
-            className: "",
-            fieldType: "image",
-            alt: "Dettol",
-            src: "/images/dettol.svg",
-          },
-          {
-            fieldType: "label",
-            labelType: "span",
-            label: "Dellot",
             className: "",
           },
         ],

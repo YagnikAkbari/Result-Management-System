@@ -50,7 +50,7 @@ app.get("/", (req, res, next) => {
 });
 
 app.use(routes);
-app.get("*", errorController.get404);
+// app.get("*", errorController.get404);
 app.use((err, req, res, next) => {
   console.log(err);
   return res.status(err?.httpStatusCode ?? 500).json(err?.message);

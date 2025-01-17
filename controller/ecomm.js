@@ -17,22 +17,22 @@ exports.getEcommPages = async (req, res) => {
         revalidation: 1520,
         authentication: true,
       },
-      "web/store-locator": {
-        isCsr: false,
-        revalidation: 1520,
-        authentication: true,
-      },
+      // "web/store-locator": {
+      //   isCsr: false,
+      //   revalidation: 1520,
+      //   authentication: true,
+      // },
       "mobile/order-medicine": {
         isCsr: false,
         revalidation: 1520,
         authentication: true,
       },
-      "web/order-medicine/dolo-650": {
+      "web/order-medicine/dolo-650mg-tablet-15s": {
         isCsr: false,
         revalidation: 1520,
         authentication: true,
       },
-      "mobile/order-medicine/dolo-650": {
+      "mobile/order-medicine/dolo-650mg-tablet-15s": {
         isCsr: false,
         revalidation: 1520,
         authentication: true,
