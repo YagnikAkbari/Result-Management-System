@@ -1,0 +1,18 @@
+.card {
+  background-color: #fff;
+  padding: 4.5rem 6.5rem;
+  font-size: 1.125rem;
+  box-shadow: 0px 17px 66px rgba(64, 63, 98, 0.16);  
+  > div {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+    label {
+      font-weight: 500;
+      line-height: 17px;
+      color: #7f7f7f;
+      font-size: 0.875rem;
+    }
+  }
+}

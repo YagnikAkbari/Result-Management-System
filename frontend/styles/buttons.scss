@@ -1,0 +1,39 @@
+button {
+  cursor: pointer;
+  &:disabled {
+    cursor: default;
+  }
+}
+.btn-primary,
+.btn-default {
+  background-color: #2f61ad;
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.6px;
+  font-size: 0.875rem;
+  &:hover {
+    background-color: rgb(35 73 130);
+  }
+  &:disabled {
+    background-color: grey;
+  }
+}
+.btn-danger {
+  background-color: #cf461b;
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.6px;
+  font-size: 0.875rem;
+  &:hover {
+    background-color: #c94219;
+  }
+  &:disabled {
+    background-color: grey;
+  }
+}

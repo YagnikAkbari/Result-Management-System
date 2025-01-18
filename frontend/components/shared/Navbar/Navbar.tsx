@@ -1,8 +1,35 @@
+"use client";
+import { tokens } from "@/common/locals";
+import { userLogout } from "@/redux/actions/user";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { redirect, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const Navbar = ({ role }: { role: string }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(userLogout());
+    redirect("/login");
+  };
+  const checkAuth = async () => {
+    const token = await tokens.get();
+    const userType = await tokens.getUserType();
+
+    if (token && userType) {
+      redirect(`/${userType ? userType?.toLocaleLowerCase() : ""}`);
+    } else {
+      tokens.remove();
+      tokens.removeUserType();
+      redirect("/login");
+      
+    }
+  };
+  useEffect(() => {
+    checkAuth();
+  }, []);
   return (
     <div className="flex items-center justify-between nav-container">
       <Link href={`/${role}`}>
@@ -52,7 +79,7 @@ const Navbar = ({ role }: { role: string }) => {
             <span>Grade Histroy</span>
           </Link>
         )}
-        <button className="flex item-center">
+        <button className="flex item-center" onClick={handleLogout}>
           <Image
             src="/icons/logout.svg"
             alt="user"

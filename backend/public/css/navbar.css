@@ -1,0 +1,86 @@
+a {
+  font-weight: 800 !important;
+  margin-right: var(--margin-md);
+}
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-md);
+  box-sizing: border-box;
+  height: 10vh;
+  max-width: 89.938rem;
+  margin: auto;
+}
+
+
+body {
+  background-color: var(--storke) !important;
+}
+
+nav {
+  background-color: var(--color-white);
+  width: 100vw;
+  padding: 1rem 0;
+}
+.menus {
+  display: flex;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+img {
+  width: 5.283rem;
+  height: 5.209rem;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  font-size: 1.125rem;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-family: var(--font-inter);
+  color: var(--grey);
+  height: 7.75rem;
+}
+
+.grade-menu img {
+  padding-bottom: 0.25rem;
+}
+.grade-menu a {
+  padding: 2rem 0rem;
+}
+
+.btns {
+  color: var(--grey);
+  font-weight: 600 !important;
+}
+.fa-icon {
+  width: 1.5rem;
+  margin-right: 0.5rem;
+  opacity: 0.6;
+}
+
+.right-nav-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.active {
+  opacity: 1;
+  color: var(--black);
+  font-weight: 800 !important;
+}
+
+.right-nav-icons a,
+.right-nav-icons .btns {
+  font-size: 1.125rem;
+  font-weight: 500;
+}

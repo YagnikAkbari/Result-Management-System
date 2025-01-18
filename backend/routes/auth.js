@@ -1,0 +1,20 @@
+const express = require("express");
+const authController = require("../controller/auth");
+const auth = require("../middleware/is-auth");
+const router = express.Router();
+const { loginStates } = require("../config/validation");
+const { validateBody } = require("../middleware/validator");
+
+router.post("/login", validateBody(loginStates), authController.postLogin);
+router.post("/logout", authController.postLogout);
+
+router.get("/reset", authController.getReset);
+router.post("/reset", authController.postReset);
+
+router.get("/reset-first-time", auth, authController.getResetFirstTime);
+router.post("/reset-first-time", authController.postResetFirstTime);
+
+router.get("/reset/:token", authController.getNewPassword);
+router.post("/new-password", authController.postNewPassword);
+
+module.exports = router;

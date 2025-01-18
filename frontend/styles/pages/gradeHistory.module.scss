@@ -1,0 +1,59 @@
+.student-information {
+  > div {
+    &:first-child {
+      width: 10rem;
+    }
+    &:nth-child(2) {
+      width: 4rem;
+    }
+    &:nth-child(3) {
+      width: 13rem;
+    }
+    &:last-child {
+      width: 9.5rem;
+    }
+  }
+  label {
+    font-size: 0.875rem;
+    color: grey;
+  }
+  p {
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+}
+
+.search-bar {
+  width: 19.563rem;
+  box-sizing: border-box;
+  background: #fff;
+  gap: 1rem;
+  box-shadow: 0px 9px 20px rgba(197, 204, 215, 0.5);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  input {
+    border: none;
+    padding: 0;
+    font-size: 1rem;
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.result-container {
+  max-width: 80vw;
+  margin: auto;
+  table{
+    width: 100%;
+  }
+  .semester-info {
+    font-size: 2.5rem;
+    font-weight: 700;
+    span {
+      color: #7f7f7f;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+  }
+}

@@ -1,0 +1,46 @@
+.table-container {
+  table {
+    background-color: #fff;
+    box-shadow: 0px 9px 20px rgba(197, 204, 215, 0.5);
+    font-size: 0.875rem;
+    border-radius: 0.935rem;
+    margin: 2rem auto;
+    text-align: center;
+    line-height: 1.15rem;
+    letter-spacing: 0.2px;
+    thead {
+      text-transform: uppercase;
+      background-color: #2c3b53;
+      color: #fff;
+      font-size: 1.125rem;
+      tr {
+        th {
+          &:first-child {
+            border-radius: 0.935rem 0 0 0;
+            padding: 1rem 2rem 1rem 4rem;
+          }
+          &:last-child {
+            border-radius: 0 0.935rem 0 0;
+            padding: 1rem 4rem 1rem 2rem;
+          }
+          padding: 1rem 2rem;
+        }
+      }
+    }
+    tbody {
+      font-size: 1rem;
+      tr {
+        border-bottom: 1px solid #dee2e6;
+        td {
+          &:first-child {
+            padding: 1rem 2rem 1rem 4rem;
+          }
+          &:last-child {
+            padding: 1rem 4rem 1rem 2rem;
+          }
+          padding: 1rem 2rem;
+        }
+      }
+    }
+  }
+}

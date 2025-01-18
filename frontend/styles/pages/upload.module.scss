@@ -1,0 +1,21 @@
+.main-box {
+  box-shadow: 0px 17px 66px rgba(64, 63, 98, 0.16);
+  .title {
+    color: #7f7f7f;
+    font-size: 1.5rem;
+  }
+  .correct-format-guide {
+    font-size: 1.2rem;
+    line-height: 20px;
+    span {
+      display: inline-block;
+    }
+    .fa-circle-down {
+      width: 20px;
+      height: 20px;
+    }
+    .correct-text {
+      color: #2f61ad;
+    }
+  }
+}

@@ -3,14 +3,25 @@ import React, { useCallback, useEffect, useState } from "react";
 import styles from "../../styles/pages/login.module.scss";
 import Link from "next/link";
 import Input from "@/components/shared/Input/Input";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "@/redux/actions/user";
+
+import { tokens } from "@/common/locals";
+import { RootState } from "@/redux";
+import { redirect, usePathname, useRouter } from "next/navigation";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [message, setMessage] = useState({ state: "", message: "" });
+  const { userData } = useSelector((state: RootState) => state.user);
+  const { errors, errorMessage } = useSelector(
+    (state: RootState) => state.error
+  );
+
   const [loginData, setLoginData] = useState({ username: "", password: "" });
-  const errorMessage = "Error Message";
-  const successMessage = "Success Message";
+
   const handleLogin = useCallback(() => {
     dispatch(userLogin(loginData));
   }, [loginData]);
@@ -27,6 +38,32 @@ const Login = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [handleLogin]);
+
+  const checkAuth = async () => {
+    const token = await tokens.get();
+
+    if (token && pathname === "/login") {
+      redirect("/");
+    }
+  };
+  useEffect(() => {
+    checkAuth();
+  }, [userData]);
+  useEffect(() => {
+    setMessage({
+      state: "error",
+      message: `${errors
+        ?.flatMap((field: { [key: string]: string }) =>
+          Object?.keys(field ?? {})
+        )
+        ?.join(", ")}${errors?.length ? " is Required" : ""}`,
+    });
+  }, [errors]);
+  useEffect(() => {
+    if (errorMessage) {
+      setMessage({ state: "error", message: errorMessage });
+    }
+  }, [errorMessage]);
   return (
     <div
       className={`flex flex-col items-center justify-center min-h-screen ${styles?.main}`}
@@ -78,14 +115,17 @@ const Login = () => {
             <Link className={styles.reset} href="/reset">
               Forgot your password? <span>Reset Password</span>
             </Link>
-            {successMessage && (
-              <div className="user-message success absolute bottom-3">
-                {successMessage}
-              </div>
-            )}
-            {errorMessage && (
-              <div className="user-message error absolute bottom-3">
-                {errorMessage}
+            {message?.state && message?.message && (
+              <div
+                className={`user-message ${
+                  message?.state === "error"
+                    ? "error"
+                    : message?.state === "success"
+                    ? "success"
+                    : ""
+                } absolute bottom-3`}
+              >
+                {message?.message}
               </div>
             )}
           </div>

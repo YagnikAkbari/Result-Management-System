@@ -1,0 +1,44 @@
+select {
+  width: 6rem;
+}
+select:nth-child(2) {
+  width: 17.125rem;
+  padding: 0.75rem;
+}
+.table {
+  width: 45.938rem;
+}
+table tr td:nth-child(1),
+table tr th:nth-child(1) {
+  padding: 16px 16px 16px 32px;
+}
+table tr td:nth-child(2),
+table tr th:nth-child(2) {
+  width: 300px;
+}
+table tr td:nth-child(3) {
+  width: 11.813rem !important;
+  height: 51px;
+}
+
+table thead tr th:nth-child(4) {
+  border-radius: 0 10px 0 0 !important;
+}
+table tr th:nth-child(4) {
+  padding: 16px 64px;
+}
+table tr td:nth-child(4) {
+  text-align: right;
+  padding: 16px 64px;
+  width: 201px;
+  height: 51px;
+}
+.view-result-svg {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.view-result-svg:hover {
+  cursor: pointer;
+  opacity: 0.9;
+  transform: scale(1.05);
+}
